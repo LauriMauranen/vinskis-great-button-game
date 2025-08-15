@@ -59,6 +59,8 @@ body {
     const minus = Math.random() < 0.03 
     const plus = Math.random() < 0.01 
 
+    let audio
+
     if (plus) {
       // video.style.display = 'block'
       // btn.style.display = 'none'
@@ -70,18 +72,15 @@ body {
       //   btn.style.display = 'block'
       //   video.reload()
       // }, 5000)
-      const audio = new Audio(pressSounds[2])
-      audio.fastSeek(0)
-      audio.play()
+      audio = new Audio(pressSounds[2])
     } else if (minus) {
-      const audio = new Audio(pressSounds[1])
-      audio.fastSeek(0)
-      audio.play()
+      audio = new Audio(pressSounds[1])
     } else {
-      const audio = new Audio(pressSounds[0])
-      audio.fastSeek(0)
-      audio.play()
+      audio = new Audio(pressSounds[0])
     }
+
+    audio.currentTime = 0
+    audio.play()
 
     setTimeout(() => btn.src = btnSrc, 300)
 
