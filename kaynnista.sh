@@ -1,8 +1,8 @@
-set -e
+set -o pipefail
 
 pkill gunicorn
 
-rm -df .venv
+rm -rf .venv
 
 python3 -m venv .venv
 
