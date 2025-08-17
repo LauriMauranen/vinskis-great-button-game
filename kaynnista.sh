@@ -1,7 +1,5 @@
 set -o pipefail
 
-pkill gunicorn
-
 rm -rf .venv
 
 python3 -m venv .venv
