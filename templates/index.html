@@ -46,9 +46,9 @@ body {
   const video = document.getElementById(btnId)
   
   const pressSounds = [
-    'public/sound/bruh-1.mp3',
-    'public/sound/explosion-1.mp3',
-    'public/sound/yeehaw-1.mp3',
+    'static/sound/bruh-1.mp3',
+    'static/sound/explosion-1.mp3',
+    'static/sound/yeehaw-1.mp3',
   ]
 
   p.innerText = 0
@@ -84,6 +84,6 @@ body {
 
     setTimeout(() => btn.src = btnSrc, 300)
 
-    p.innerText = Number(p.innerText) + 1 + plus*99 - (!plus && minus)*51
+    p.innerText = Number(p.innerText) + 1 + plus * 99 - (!plus && minus) * 51
   }
 </script>
