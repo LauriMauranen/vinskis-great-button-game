@@ -33,10 +33,26 @@ def init_db():
         db.executescript(f.read().decode('utf8'))
 
 
+def query_db(query, args=(), one=False):
+    cur = get_db().execute(query, args)
+    rv = cur.fetchall()
+    cur.close()
+    return (rv[0] if rv else None) if one else rv
+
+
+def insert_in_db(query, args=()):
+    cur = get_db().cursor().execute(query, args)
+    get_db().commit()
+    cur.close()
+    return cur.lastrowid
+
+
 @click.command('init-db')
 def init_db_command():
     """Clear the existing data and create new tables."""
     init_db()
+    # id 1 on painallukset yhteensä
+    insert_in_db('INSERT INTO clicks (id, n) VALUES (1, 0)')
     click.echo('Initialized the database.')
 
 
