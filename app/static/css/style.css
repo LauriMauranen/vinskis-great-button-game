@@ -1,0 +1,10 @@
+body {
+  margin: 100px;
+}
+
+.button {
+  display: block;
+  height: 300px;
+  margin: auto;
+  padding: 150px;
+}

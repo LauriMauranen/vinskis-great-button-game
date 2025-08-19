@@ -18,8 +18,7 @@ db.init_app(app)
 
 @app.route("/")
 def home():
-    big_n = db.query_big_n()
-    return render_template('index.html', big_n=big_n)
+    return render_template('index.html')
 
 
 @app.route("/clicks/", methods=['POST'])
@@ -28,8 +27,12 @@ def clicks():
 
     if int(n) < 200: 
         last_id = db.insert_in_db('INSERT into clicks (n) VALUES (?)', [n])
-        print(f'added row with id {last_id}')
-
+        print(f'added row to clicks with id {last_id}')
+    else:
+        print(f'n too big ({n})')
+    
     big_n = db.update_big_n(n)
 
-    return { 'bigN': big_n } 
+    print(f'{big_n} button presses overall')
+
+    return 'OK'
