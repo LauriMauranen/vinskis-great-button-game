@@ -1,5 +1,5 @@
 import sqlite3
-import datetime
+from datetime import datetime
 
 import click
 from flask import current_app, g
@@ -34,17 +34,37 @@ def init_db():
 
 
 def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
+    cur = get_db().cursor().execute(query, args)
+
+    if one: return cur.fetchone()
+
     rv = cur.fetchall()
     cur.close()
-    return (rv[0] if rv else None) if one else rv
+
+    return rv
 
 
 def insert_in_db(query, args=()):
     cur = get_db().cursor().execute(query, args)
     get_db().commit()
+    last_id = cur.lastrowid
     cur.close()
-    return cur.lastrowid
+    return last_id
+
+
+def update_in_db(query, args=()):
+    cur = get_db().cursor().execute(query, args)
+    get_db().commit()
+    cur.close()
+
+
+def update_big_n(n):
+    update_in_db('UPDATE clicks SET n = n + ? WHERE id = 1', [n])
+    return query_big_n()
+
+
+def query_big_n():
+    return query_db('SELECT n FROM clicks WHERE id = 1', one=True)['n']
 
 
 @click.command('init-db')
