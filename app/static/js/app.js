@@ -1,22 +1,90 @@
-const scoreId = 'score'
-const btnId = 'btn'
+// constanst
 
-const btnSrc = "https://m.media-amazon.com/images/I/51AaftUj5KL._AC_SL1000_.jpg" 
 
-const p = document.getElementById(scoreId)
-const btn = document.getElementById(btnId)
+const SCORE_ID = 'score'
+const BTN_ID = 'btn'
+const SHOP_BTN_ID = 'shop-btn'
+
+const BTN_SRC = "https://m.media-amazon.com/images/I/51AaftUj5KL._AC_SL1000_.jpg" 
+
+const N_STARS = 100
+const STARS = []
+
+const PRESS_SOUNDS = {
+  bruh: 'static/sound/bruh-1.mp3',
+  explosion: 'static/sound/explosion-1.mp3',
+  yeehaw: 'static/sound/yeehaw-1.mp3',
+}
+
+
+// events
+
+
+const PRESS_EVENTS = [
+  {
+    name: 'basic',
+    probability: null,
+    sound: PRESS_SOUNDS.bruh,
+    add: 1
+  },
+  {
+    name: 'explosion',
+    probability: 0.005,
+    sound: PRESS_SOUNDS.explosion,
+    add: -100,
+  },
+  {
+    name: 'lucky',
+    probability: 0.01,
+    sound: PRESS_SOUNDS.yeehaw,
+    add: 100,
+  },
+]
+
+PRESS_EVENTS[0].probability = 
+  1 - Math.sumPrecise(PRESS_EVENTS.slice(1).map(ev => ev.probability))
+
+if (PRESS_EVENTS[0].probability < 0) {
+  throw new Error('Probabilities don`t sum up to one.')
+}
+
+
+// globals
+
+
+let score = 0
 
 let clicks = 0
 let clicksSent = 0
 
+const scoreEl = document.getElementById(SCORE_ID)
+const btnEl = document.getElementById(BTN_ID)
 
-const pressSounds = [
-  'static/sound/bruh-1.mp3',
-  'static/sound/explosion-1.mp3',
-  'static/sound/yeehaw-1.mp3',
-]
+scoreEl.innerText = score
+btnEl.src = BTN_SRC
 
-p.innerText = 0
+
+// helpers
+
+
+function randEvent(evs) {
+  const val = Math.random()
+  let compare = 0
+  for (let i = 0; i < evs.length; i++) {
+    compare += evs[i].probability
+    if (val < compare) return evs[i] 
+  }
+
+  throw new Error('Should have returned.')
+}
+
+
+function randInt(max) {
+  return Math.floor(Math.random() * max)
+}
+
+
+// click statistics
 
 
 setInterval(() => {
@@ -32,37 +100,54 @@ setInterval(() => {
   })
     .then((res) => {
       if (!res.ok) throw new Error(res.status)
-      return res.json()
-    })
-    .then((data) => {
       clicksSent += n 
     })
     .catch(console.log)
 }, 30000)
 
 
-function onPress() {
-  btn.src = "https://thumbs.dreamstime.com/z/red-button-isolated-white-background-pressed-d-illustration-red-button-isolated-white-background-270798034.jpg?ct=jpeg" 
+// spawn stars
 
-  const minus = Math.random() < 0.01 
-  const plus = Math.random() < 0.01 
+
+for (let i = 0; i < N_STARS; i++) {
+  const div = document.createElement('div')
+  div.classList.add('star')
+
+  const color = randInt(2) ? 'blue-star-color' : 'pink-star-color'
+  div.classList.add(color)
+
+  // x-axis
+  div.style.left = `${randInt(111) - 5}%`
+
+  if (randInt(2)) div.style.animationName = 'falling-and-rotating-ccw'
+
+  STARS.push(div)
+
+  setTimeout(() => document.body.appendChild(div), randInt(20000))
+}
+
+
+// press handlers
+
+
+function onPressShop() {
+
+}
+
+
+function onPressButton() {
+  btnEl.src = "https://thumbs.dreamstime.com/z/red-button-isolated-white-background-pressed-d-illustration-red-button-isolated-white-background-270798034.jpg?ct=jpeg" 
+
+  setTimeout(() => btnEl.src = BTN_SRC, 300)
 
   clicks += 1
 
-  let audio
+  const ev = randEvent(PRESS_EVENTS)
 
-  if (plus) {
-    audio = new Audio(pressSounds[2])
-  } else if (minus) {
-    audio = new Audio(pressSounds[1])
-  } else {
-    audio = new Audio(pressSounds[0])
-  }
-
+  const audio = new Audio(ev.sound)
   audio.currentTime = 0
   audio.play()
 
-  setTimeout(() => btn.src = btnSrc, 300)
-
-  p.innerText = Number(p.innerText) + 1 + plus * 99 - (!plus && minus) * 51
+  score += ev.add
+  scoreEl.innerText = score 
 }

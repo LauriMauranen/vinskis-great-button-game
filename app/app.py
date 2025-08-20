@@ -27,7 +27,7 @@ def clicks():
 
     if int(n) < 200: 
         last_id = db.insert_in_db('INSERT into clicks (n) VALUES (?)', [n])
-        print(f'added row to clicks with id {last_id}')
+        print(f'added row to clicks, id: {last_id}, n: {n}')
     else:
         print(f'n too big ({n})')
     

@@ -1,20 +1,35 @@
+<!DOCTYPE html>
+
 <html>
   <head>
     <title>Vinkis Great Button Game</title>
     <link rel="stylesheet" href="static/css/style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta 
+      name="viewport" 
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
     <script defer src="static/js/app.js" ></script>
   </head>
 
   <body>
-    <h1 id="score" ></h1>
+    <div class="score">
+      <h1>Score</h1>
+      <h1 id="score"></h1>
+    </div>
+
+    <!-- <div id="shop-btn"> -->
+    <!--   <h1>Shop</h1> -->
+    <!-- </div> -->
+
     <input 
       id="btn"
       class="button" 
       type="image" 
-      src="https://m.media-amazon.com/images/I/51AaftUj5KL._AC_SL1000_.jpg" 
-      onclick="onPress()"
+      onclick="onPressButton()"
     />
+
+    <div class="title" onclick="onPressShop()">
+      <h1>Vinskis Great Button Game</h1>
+    </div>
   </body>
 </html>
-

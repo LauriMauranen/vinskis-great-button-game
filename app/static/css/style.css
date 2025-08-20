@@ -1,10 +1,98 @@
 body {
-  margin: 100px;
+  background-color: #41aba0;
+  margin: 0;
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 3em;
+  margin: 0.3em;
 }
 
 .button {
-  display: block;
-  height: 300px;
-  margin: auto;
-  padding: 150px;
+  z-index: 15;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 25em;
+}
+
+.score {
+  z-index: 10;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #f5faf9;
+  opacity: 0.6;
+  width: 10em;
+  height: 10em;
+  text-align: center;
+  margin-top 0.5em;
+}
+
+#shop-btn {
+  z-index: 10;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 8em;
+  height: 6em;
+  opacity: 0.9;
+  background-color: #eb9f1c;
+  text-align: center;
+}
+
+.title {
+  z-index: 10;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.blue-star-color {
+  background: #85dde6;
+}
+
+.pink-star-color {
+  background: #db7bdb;
+}
+
+.star {
+  z-index: 5;
+  position: absolute;
+  width: 3em;
+  aspect-ratio: 1;
+  clip-path: polygon(50% 0,
+    calc(50%*(1 + sin(.4turn))) calc(50%*(1 - cos(.4turn))),
+    calc(50%*(1 - sin(.2turn))) calc(50%*(1 - cos(.2turn))),
+    calc(50%*(1 + sin(.2turn))) calc(50%*(1 - cos(.2turn))),
+    calc(50%*(1 - sin(.4turn))) calc(50%*(1 - cos(.4turn))) 
+   ); 
+
+  animation-name: falling-and-rotating-cw;
+  animation-duration: 20s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes falling-and-rotating-cw {
+  from {
+    top: -5%;
+  }
+  to {
+    top: 105%;;
+    transform: rotate(2turn);
+  }
+}
+
+@keyframes falling-and-rotating-ccw {
+  from {
+    top: -5%;
+  }
+  to {
+    top: 105%;;
+    transform: rotate(-2turn);
+  }
 }
