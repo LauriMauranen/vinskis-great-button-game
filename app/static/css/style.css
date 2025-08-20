@@ -9,13 +9,17 @@ h1 {
   margin: 0.3em;
 }
 
-.button {
+#btn {
   z-index: 15;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
   width: 25em;
+}
+
+.push-btn {
+  animation: push-button 0.2s linear;
 }
 
 .score {
@@ -94,5 +98,11 @@ h1 {
   to {
     top: 105%;;
     transform: rotate(-2turn);
+  }
+}
+
+@keyframes push-button {
+  50% {
+    top: 55%;
   }
 }

@@ -5,8 +5,6 @@ const SCORE_ID = 'score'
 const BTN_ID = 'btn'
 const SHOP_BTN_ID = 'shop-btn'
 
-const BTN_SRC = "https://m.media-amazon.com/images/I/51AaftUj5KL._AC_SL1000_.jpg" 
-
 const N_STARS = 100
 const STARS = []
 
@@ -61,7 +59,6 @@ const scoreEl = document.getElementById(SCORE_ID)
 const btnEl = document.getElementById(BTN_ID)
 
 scoreEl.innerText = score
-btnEl.src = BTN_SRC
 
 
 // helpers
@@ -136,9 +133,8 @@ function onPressShop() {
 
 
 function onPressButton() {
-  btnEl.src = "https://thumbs.dreamstime.com/z/red-button-isolated-white-background-pressed-d-illustration-red-button-isolated-white-background-270798034.jpg?ct=jpeg" 
-
-  setTimeout(() => btnEl.src = BTN_SRC, 300)
+  btnEl.classList.add('push-btn')
+  setTimeout(() => btnEl.classList.remove('push-btn'), 200)
 
   clicks += 1
 
