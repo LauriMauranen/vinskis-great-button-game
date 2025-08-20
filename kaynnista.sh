@@ -8,9 +8,7 @@ python3 -m venv .venv
 
 pip install -r requirements.txt
 
-cd app/
-
-gunicorn -w 4 -D -u www-data 'app:app'
+gunicorn -w 4 -D -u www-data --chdir app 'app:app'
 
 cp nginx.conf /etc/nginx/
 
