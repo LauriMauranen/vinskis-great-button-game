@@ -11,12 +11,10 @@ python3 -m venv .venv
 pip install -r requirements.txt
 
 if [ -z "$UUSI" ]; then
-	cd app/
+	gunicorn --reload 'app:app'
+else
 	flask init-db
 	gunicorn -w 4 -D -u www-data 'app:app'
-	cd ../
-else
-	gunicorn --reload
 fi
 
 cp nginx.conf /etc/nginx/
