@@ -26,10 +26,10 @@ const PRESS_EVENTS = [
     add: 1
   },
   {
-    name: 'explosion',
+    name: 'unlucky',
     probability: 0.005,
     sound: PRESS_SOUNDS.explosion,
-    add: -100,
+    add: -50,
   },
   {
     name: 'lucky',
