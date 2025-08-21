@@ -16,9 +16,14 @@ pip install -r requirements.txt
 if [ ! -z "$INIT_DB" ]; then
 	echo "Old database will be overwritten."	
 	flask init-db
+	chown :www-data "$DATABASE"
+	chmod g+w "$DATABASE"
 fi
 
-pkill -f gunicorn
-gunicorn -w 4 -D --error-logfile "$GUNICORN_ERROR_LOG" 'app:app'
 
-nginx -c "$NGINX_CONF" -s reload
+pkill -f gunicorn
+gunicorn -w 4 -u www-data -D --error-logfile "$GUNICORN_ERROR_LOG" 'app:app'
+
+cp nginx.conf /etc/nginx/
+
+nginx -s reload
