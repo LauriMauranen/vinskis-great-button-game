@@ -1,4 +1,4 @@
-set -o pipefail
+set -e
 
 source .env
 
@@ -14,14 +14,12 @@ pip install -r requirements.txt
 
 # TODO promt this
 if [ ! -z "$INIT_DB" ]; then
-	echo "Old database will be destroyed."	
+	echo "Old database will be overwritten."	
 	flask init-db
-	# write access
-	sudo chgrp www-data "$DATABASE" 
 fi
 
 pkill -f gunicorn
-gunicorn -w 4 -D -u www-data --error-logfile "$GUNICORN_ERROR_LOG" 'app:app'
+gunicorn -w 4 -D --error-logfile "$GUNICORN_ERROR_LOG" 'app:app'
 
 cp nginx.conf /etc/nginx/
 
