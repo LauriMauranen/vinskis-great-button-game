@@ -1,5 +1,7 @@
 set -o pipefail
 
+source .env
+
 INIT_DB="$1"
 
 rm -rf .venv
@@ -17,7 +19,7 @@ if [ ! -z "$INIT_DB" ]; then
 fi
 
 pkill -f gunicorn
-gunicorn -w 4 -D -u www-data 'app:app'
+gunicorn -w 4 -D -u www-data --error-logfile "$GUNICORN_ERROR_LOG" 'app:app'
 
 cp nginx.conf /etc/nginx/
 
