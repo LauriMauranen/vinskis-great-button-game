@@ -14,8 +14,10 @@ pip install -r requirements.txt
 
 # TODO promt this
 if [ ! -z "$INIT_DB" ]; then
+	echo "Old database will be destroyed."	
 	flask init-db
-	echo "Old database destroyed."	
+	# write access
+	sudo chgrp www-data "$DATABASE" 
 fi
 
 pkill -f gunicorn
