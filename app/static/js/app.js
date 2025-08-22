@@ -55,6 +55,8 @@ let score = 0
 let clicks = 0
 let clicksSent = 0
 
+let showEruda = false
+
 const scoreEl = document.getElementById(SCORE_ID)
 const btnEl = document.getElementById(BTN_ID)
 
@@ -122,6 +124,39 @@ for (let i = 0; i < N_STARS; i++) {
 
   setTimeout(() => document.body.appendChild(div), randInt(20000))
 }
+
+
+// keypress listener for eruda
+
+
+let lastEvent = null
+
+scoreEl.addEventListener('dblclick', () => {
+  if (!eruda) return
+
+  const now = new Date
+
+  // four second cooldown 
+  if (lastEvent) {
+    const diff = now.valueOf() - lastEvent.valueOf()  // ms
+    if (diff < 3000) {
+      console.log('Too soon')
+      return
+    }
+  }
+
+  lastEvent = now
+
+  console.log('Toggle eruda')
+
+  if (showEruda) {
+    eruda.destroy()
+    showEruda = false
+  } else {
+    eruda.init()
+    showEruda = true
+  }
+})
 
 
 // press handlers
