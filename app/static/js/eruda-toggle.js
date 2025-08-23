@@ -1,6 +1,6 @@
 let lastEvent = null
 
-document.getElementById('score').addEventListener('dblclick', () => {
+document.getElementById('score-rect').addEventListener('dblclick', () => {
   if (!eruda) {
     console.log('Eruda not found.')
     return

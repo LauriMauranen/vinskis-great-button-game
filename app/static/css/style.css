@@ -22,7 +22,7 @@ h1 {
   animation: push-button 0.2s linear;
 }
 
-.score {
+#score-rect {
   z-index: 10;
   position: absolute;
   left: 0;
