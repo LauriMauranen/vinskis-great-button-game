@@ -8,10 +8,10 @@ document.getElementById('score-rect').addEventListener('dblclick', () => {
 
   const now = new Date
 
-  // three second cooldown 
+  // two second cooldown 
   if (lastEvent) {
     const diff = now.valueOf() - lastEvent.valueOf()  // ms
-    if (diff < 3000) {
+    if (diff < 2000) {
       console.log('Too soon')
       return
     }

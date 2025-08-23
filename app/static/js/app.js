@@ -39,12 +39,14 @@ const PRESS_EVENTS = [
   },
 ]
 
-PRESS_EVENTS[0].probability = 
-  1 - Math.sumPrecise(PRESS_EVENTS.slice(1).map(ev => ev.probability))
+const p = 
+  1 - PRESS_EVENTS.slice(1).reduce((acc, cur) => acc + cur.probability, 0)
 
-if (PRESS_EVENTS[0].probability < 0) {
+if (typeof p === 'undefined' || p === null || Number.isNaN(p) || p < 0) {
   throw new Error('Probabilities don`t sum up to one.')
 }
+
+PRESS_EVENTS[0].probability = p
 
 
 // globals
