@@ -5,7 +5,7 @@ const SCORE_ID = 'score'
 const BTN_ID = 'btn'
 const SHOP_BTN_ID = 'shop-btn'
 
-const N_STARS = 100
+const N_STARS = window.screen.availWidth < 700 ? 25 : 100
 const STARS = []
 
 const PRESS_SOUNDS = {
