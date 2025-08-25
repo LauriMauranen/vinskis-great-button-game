@@ -40,11 +40,82 @@ h1 {
   position: absolute;
   right: 0;
   top: 0;
-  width: 8em;
-  height: 6em;
+  width: 10em;
+  height: 8em;
   opacity: 0.9;
   background-color: #eb9f1c;
-  text-align: center;
+}
+
+#game {
+  display: none;
+}
+
+#shop {
+  display: block;
+}
+
+#shop-items {
+  z-index: 10;
+  background-color: #85dde6;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 70%;
+  width: 70%;
+  transform: translateX(-50%) translateY(-50%);
+  border-style: solid;
+  border-color: black;
+  border-width: 0.3em;
+}
+
+#shop-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.shop-item {
+  margin-left: -0.3em;
+  margin-top: -0.3em;
+  padding: 0em;
+  height: 15em;
+  width: 15em;
+  border-style: solid;
+  border-color: black;
+  border-width: 0.3em;
+}
+
+.shop-item h2 {
+  display: inline-block;
+  margin: 0.5em;
+}
+
+.shop-item h3 {
+  display: inline;
+}
+
+.shop-item img {
+  display: inline-block;
+  margin-left: 0.5em;
+  height: 5em;
+  width: 5em;
+  vertical-align: baseline;
+}
+
+.shop-item p {
+  display: inline-block;
+  margin-top: 0;
+  margin-left: 1em;
+  height: 8em;
+  width: 8em;
+}
+
+.shop-item button {
+  position: relative;
+  transform: translateX(-50%);
+  background-color: #eb9f1c;
+  height: 3em;
+  width: 4em;
+  left: 50%;
 }
 
 .title {
@@ -56,11 +127,11 @@ h1 {
 }
 
 .blue-star-color {
-  background: #85dde6;
+  background-color: #85dde6;
 }
 
 .pink-star-color {
-  background: #db7bdb;
+  background-color: #db7bdb;
 }
 
 .star {

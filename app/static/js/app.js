@@ -3,10 +3,20 @@
 
 const SCORE_ID = 'score'
 const BTN_ID = 'btn'
-const SHOP_BTN_ID = 'shop-btn'
+const SHOP_BTN_TITLE_ID = 'shop-btn-title'
+const GAME_ID = 'game'
+const SHOP_ID = 'shop'
 
 const N_STARS = window.screen.availWidth < 700 ? 25 : 100
 const STARS = []
+
+const SHOP_BTN_TITLE_1 = 'Shop'
+const SHOP_BTN_TITLE_2 = 'Back'
+
+const GAME_VIEWS = Object.freeze({
+  GAME: 'GAME',
+  SHOP: 'SHOP',
+})
 
 const PRESS_SOUNDS = {
   bruh: 'static/sound/bruh-1.mp3',
@@ -20,24 +30,25 @@ const PRESS_SOUNDS = {
 
 const PRESS_EVENTS = [
   {
-    name: 'basic',
+    // name: 'basic',
     probability: null,
     sound: PRESS_SOUNDS.bruh,
     add: 1
   },
   {
-    name: 'unlucky',
+    // name: 'unlucky',
     probability: 0.005,
     sound: PRESS_SOUNDS.explosion,
     add: -50,
   },
   {
-    name: 'lucky',
+    // name: 'lucky',
     probability: 0.01,
     sound: PRESS_SOUNDS.yeehaw,
     add: 100,
   },
 ]
+
 
 const p = 
   1 - PRESS_EVENTS.slice(1).reduce((acc, cur) => acc + cur.probability, 0)
@@ -47,6 +58,35 @@ if (typeof p === 'undefined' || p === null || Number.isNaN(p) || p < 0) {
 }
 
 PRESS_EVENTS[0].probability = p
+
+
+// items
+
+
+const ITEMS = [
+  {
+    name: 'Auto Clicker',
+    price: ,
+    effect() {
+    },
+  },
+  {
+    name: 'Auto Clicker',
+    price: ,
+    effect() {
+    },
+  },
+    name: 'Auto Clicker',
+    price: ,
+    effect() {
+    },
+  },
+    name: 'Auto Clicker',
+    price: ,
+    effect() {
+    },
+  },
+]
 
 
 // globals
@@ -59,10 +99,16 @@ let clicksSent = 0
 
 let showEruda = false
 
+let view = GAME_VIEWS.GAME
+
 const scoreEl = document.getElementById(SCORE_ID)
 const btnEl = document.getElementById(BTN_ID)
+const shopBtnTitleEl = document.getElementById(SHOP_BTN_TITLE_ID)
+const gameEl = document.getElementById(GAME_ID)
+const shopEl = document.getElementById(SHOP_ID)
 
 scoreEl.innerText = score
+shopBtnTitleEl.innerText = SHOP_BTN_TITLE_1
 
 
 // helpers
@@ -131,8 +177,26 @@ for (let i = 0; i < N_STARS; i++) {
 // press handlers
 
 
-function onPressShop() {
+function onPressShopBtn() {
+  switch(view) {
+    case GAME_VIEWS.GAME: {
+      view = GAME_VIEWS.SHOP
+      gameEl.style.display = 'none'    
+      shopEl.style.display = 'block'    
+      shopBtnTitleEl.innerText = SHOP_BTN_TITLE_2
+      break
+    }
 
+    case GAME_VIEWS.SHOP: {
+      view = GAME_VIEWS.GAME
+      shopEl.style.display = 'none'    
+      gameEl.style.display = 'block'    
+      shopBtnTitleEl.innerText = SHOP_BTN_TITLE_1
+      break
+    }
+
+    default: throw new Error('Unexpected game view.')
+  }
 }
 
 

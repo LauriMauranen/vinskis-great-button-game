@@ -14,24 +14,52 @@
   </head>
 
   <body>
-    <div id="score-rect">
-      <h1>Score</h1>
-      <h1 id="score"></h1>
+    <button 
+      id="shop-btn" 
+      type="button"
+      onclick="onPressShopBtn()"
+    >
+      <h1 id="shop-btn-title"></h1>
+    </button>
+
+    <div id="game">
+      <div id="score-rect">
+        <h1>Score</h1>
+        <h1 id="score"></h1>
+      </div>
+      
+      
+      <input 
+        id="btn"
+        type="image" 
+        src="/static/img/button.png"
+        onclick="onPressButton()"
+      />
+      
+      <div class="title">
+        <h1>Vinskis Great Button Game</h1>
+      </div>
     </div>
 
-    <!-- <div id="shop-btn"> -->
-    <!--   <h1>Shop</h1> -->
-    <!-- </div> -->
-
-    <input 
-      id="btn"
-      type="image" 
-      src="/static/img/button.png"
-      onclick="onPressButton()"
-    />
-
-    <div class="title">
-      <h1>Vinskis Great Button Game</h1>
+    <div id="shop">
+      <div id="shop-items">
+        <div id="shop-container">
+          <div class="shop-item">
+            <h2>Item 1</h2>
+            <h3>1100</h3>
+            <br>
+            <img src="/static/img/button.png">
+            <p>
+Consectetur obcaecati quibusdam nihil sapiente laborum. Sapiente expedita sapiente id animi id.
+            </p>
+            <button><b>Buy</b></button>
+          </div>
+          <div class="shop-item">
+            <h2>Item 2</h2>
+          </div>
+        </div>
+      </div>
     </div>
+
   </body>
 </html>
