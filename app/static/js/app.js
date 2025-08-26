@@ -60,35 +60,6 @@ if (typeof p === 'undefined' || p === null || Number.isNaN(p) || p < 0) {
 PRESS_EVENTS[0].probability = p
 
 
-// items
-
-
-const ITEMS = [
-  {
-    name: 'Auto Clicker',
-    price: ,
-    effect() {
-    },
-  },
-  {
-    name: 'Auto Clicker',
-    price: ,
-    effect() {
-    },
-  },
-    name: 'Auto Clicker',
-    price: ,
-    effect() {
-    },
-  },
-    name: 'Auto Clicker',
-    price: ,
-    effect() {
-    },
-  },
-]
-
-
 // globals
 
 
@@ -114,6 +85,14 @@ shopBtnTitleEl.innerText = SHOP_BTN_TITLE_1
 // helpers
 
 
+class NotImplementedError extends Error {
+  constructor() {
+    super('Not Implemented')
+    this.name = 'NotImplementedError'
+  }
+}
+
+
 function randEvent(evs) {
   const val = Math.random()
   let compare = 0
@@ -129,6 +108,119 @@ function randEvent(evs) {
 function randInt(max) {
   return Math.floor(Math.random() * max)
 }
+
+
+// items
+
+
+class Item {
+  static get ID() {
+    throw new NotImplementedError
+  }
+
+  constructor(name, img, textTemplate, levels) {
+    this.name = name
+    this.img = img
+    this.textTemplate = textTemplate
+    this.levels = levels
+    this.level = 0
+  }
+
+  effect() {
+    throw new NotImplementedError
+  }
+
+  removeEffect() {
+    throw new NotImplementedError
+  }
+
+  get price() {
+    if (this.isFullLevel) return 'Full level'
+    return this.levels[this.level].price
+  }
+
+  get isFullLevel() {
+    return !this.levels[this.level]
+  }
+
+  levelUp() {
+    if (this.isFullLevel) throw new Error('Full level')
+    this.removeEffect()
+    this.level++
+    this.effect()
+  }
+}
+
+
+class AutoClicker extends Item {
+  constructor() {
+    super(
+      'Auto Clicker', 
+      '/static/img/button.png',
+      'Consectetur obcaecati quibusdam nihil sapiente laborum.',
+      [{ eff: 5000, price: 1000 },
+      { eff: 4000, price: 2000 },
+      { eff: 3000, price: 4000 },
+      { eff: 2000, price: 8000 },
+      { eff: 1000, price: 16000 },
+      { eff: 900, price: 32000 },
+      { eff: 800, price: 64000 },
+      { eff: 700, price: 128000 },
+      { eff: 600, price: 256000 },
+      { eff: 500, price: 512000 }]
+    )
+
+    this.interval = null
+  }
+
+  effect() {
+    onPressButton()
+    this.interval = 
+      setInterval(onPressButton, this.levels[this.level].eff)
+  }
+
+  removeEffect() {
+    clearInterval(this.interval)  
+  }
+}
+
+
+const ITEMS = {
+  [AutoClicker.ID]: AutoClicker(),
+}
+
+
+Object.keys(ITEMS).forEach(id => {
+  const item = ITEMS.id
+
+  const div = document.createElement('div')
+  div.classList.add('shop-item')
+
+  const h2 = document.createElement('h2')
+  h2.innerText = item.name
+  div.appendChild(h2)
+
+  const h3 = document.createElement('h3')
+  h3.innerText = item.price
+  div.appendChild(h3)
+
+  div.appendChild(document.createElement('br'))
+
+  const img = document.createElement('img')
+  img.src = item.img
+  div.appendChild(img)
+
+  const p = document.createElement('p')
+  p.innerText = item.textTemplate
+  div.appendChild(p)
+
+  const btn = document.createElement('button')
+  btn.onclick = () => onPressBuyItem(item)
+  btn.innerHTML = '<b>Buy</b>'
+  div.appendChild(btn)
+
+  document.getElementById('shop-container').appendChild(div)
+})
 
 
 // click statistics
@@ -214,4 +306,10 @@ function onPressButton() {
 
   score += ev.add
   scoreEl.innerText = score 
+}
+
+function onPressBuyItem(item) {
+  if (this.score < this.item.price) throw new Error('Not enough score.')
+  this.score -= this.item.price
+  this.item.levelUp()
 }

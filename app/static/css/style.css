@@ -104,6 +104,7 @@ h1 {
 .shop-item p {
   display: inline-block;
   margin-top: 0;
+  margin-bottom: 0;
   margin-left: 1em;
   height: 8em;
   width: 8em;
