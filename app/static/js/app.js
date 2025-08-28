@@ -7,11 +7,15 @@ const SHOP_BTN_TITLE_ID = 'shop-btn-title'
 const GAME_ID = 'game'
 const SHOP_ID = 'shop'
 
-const N_STARS = window.screen.availWidth < 700 ? 25 : 100
+const N_STARS = window.screen.availWidth < 700 ? 25 : 25
 const STARS = []
 
 const SHOP_BTN_TITLE_1 = 'Shop'
 const SHOP_BTN_TITLE_2 = 'Back'
+
+const ITEM_IDS = Object.freeze({
+  autoclicker: 'item-autoclicker',
+})
 
 const GAME_VIEWS = Object.freeze({
   GAME: 'GAME',
@@ -48,7 +52,6 @@ const PRESS_EVENTS = [
     add: 100,
   },
 ]
-
 
 const p = 
   1 - PRESS_EVENTS.slice(1).reduce((acc, cur) => acc + cur.probability, 0)
@@ -92,6 +95,10 @@ class NotImplementedError extends Error {
   }
 }
 
+function updateScore(add) {
+  score += add
+  scoreEl.innerText = score 
+}
 
 function randEvent(evs) {
   const val = Math.random()
@@ -104,26 +111,49 @@ function randEvent(evs) {
   throw new Error('Should have returned.')
 }
 
-
 function randInt(max) {
   return Math.floor(Math.random() * max)
 }
+
+function updateItemHTML(item) {
+  document.getElementById(item.levelId).innerText = item.level
+  document.getElementById(item.priceId).innerText = item.price
+  document.getElementById(item.textId).innerText = item.text
+}
+
+function btnId(id) {
+  return `item-buy-btn-${id}`
+} 
+
+function priceId(id) {
+  return `item-price-${id}`
+} 
+
+function levelId(id) {
+  return `item-level-${id}`
+} 
+
+function textId(id) {
+  return `item-text-${id}`
+} 
+
+function updateBuyBtn(item) {
+  document.getElementById(item.btnId)
+    .disabled = !item.canBuy
+} 
 
 
 // items
 
 
 class Item {
-  static get ID() {
-    throw new NotImplementedError
-  }
-
-  constructor(name, img, textTemplate, levels) {
+  constructor(id, name, img, textTemplate, levels) {
+    this.id = id
     this.name = name
     this.img = img
-    this.textTemplate = textTemplate
+    this._textTemplate = textTemplate
     this.levels = levels
-    this.level = 0
+    this.level = 1
   }
 
   effect() {
@@ -134,33 +164,68 @@ class Item {
     throw new NotImplementedError
   }
 
+  get textVals() {
+    throw new NotImplementedError
+  }
+
+  get text() {
+    let txt = this._textTemplate
+    this.textVals.forEach(val => txt = txt.replace('?', val))
+    return txt
+  }
+
+  get canBuy() {
+    return true
+    // return !this.isFullLevel && score >= this.price
+  }
+
   get price() {
-    if (this.isFullLevel) return 'Full level'
-    return this.levels[this.level].price
+    if (this.isFullLevel) return '-'
+    return this.levels[this.level-1].price
   }
 
   get isFullLevel() {
-    return !this.levels[this.level]
+    return this.levels.length === this.level
+  }
+
+  get levelStuff() {
+    return this.levels[this.level - 1]
+  }
+
+  get priceId() {
+    return priceId(this.id)
+  }
+
+  get btnId() {
+    return btnId(this.id)
+  }
+
+  get levelId() {
+    return levelId(this.id)
+  }
+
+  get textId() {
+    return textId(this.id)
   }
 
   levelUp() {
     if (this.isFullLevel) throw new Error('Full level')
     this.removeEffect()
-    this.level++
     this.effect()
+    this.level++
   }
 }
 
-
 class AutoClicker extends Item {
-  constructor() {
+  constructor(id) {
     super(
+      id,
       'Auto Clicker', 
       '/static/img/button.png',
-      'Consectetur obcaecati quibusdam nihil sapiente laborum.',
+      'Auto-clicks the button ? times per second.',
       [{ eff: 5000, price: 1000 },
       { eff: 4000, price: 2000 },
-      { eff: 3000, price: 4000 },
+      { eff: 2500, price: 4000 },
       { eff: 2000, price: 8000 },
       { eff: 1000, price: 16000 },
       { eff: 900, price: 32000 },
@@ -174,52 +239,55 @@ class AutoClicker extends Item {
   }
 
   effect() {
-    onPressButton()
     this.interval = 
-      setInterval(onPressButton, this.levels[this.level].eff)
+      setInterval(onPressButton, this.levelStuff.eff)
   }
 
   removeEffect() {
     clearInterval(this.interval)  
   }
+
+  get textVals() {
+    const val = (1000 / this.levelStuff.eff).toFixed(1)
+    return [val]
+  }
 }
 
+const ITEMS = [
+  new AutoClicker(1),
+  new AutoClicker(2),
+]
 
-const ITEMS = {
-  [AutoClicker.ID]: AutoClicker(),
-}
+// items to the shop
 
-
-Object.keys(ITEMS).forEach(id => {
-  const item = ITEMS.id
-
+ITEMS.forEach(item => {
   const div = document.createElement('div')
   div.classList.add('shop-item')
+  div.id = item.id
 
-  const h2 = document.createElement('h2')
-  h2.innerText = item.name
-  div.appendChild(h2)
+  if (!div.id) throw new Error('Id missing.')
 
-  const h3 = document.createElement('h3')
-  h3.innerText = item.price
-  div.appendChild(h3)
-
-  div.appendChild(document.createElement('br'))
-
-  const img = document.createElement('img')
-  img.src = item.img
-  div.appendChild(img)
-
-  const p = document.createElement('p')
-  p.innerText = item.textTemplate
-  div.appendChild(p)
+  div.innerHTML = `
+<h2>${item.name}</h2>
+<h3>Level 
+  <span id="${item.levelId}">${item.level}</span>
+</h3>
+<br>
+<img src="${item.img}" alt="">
+<p id="${item.textId}">${item.text}</p>
+<h3>Price
+  <span id="${item.priceId}">${item.price}</span>
+</h3>
+  `
 
   const btn = document.createElement('button')
+  btn.id = item.btnId
   btn.onclick = () => onPressBuyItem(item)
+  btn.disabled = !item.canBuy
   btn.innerHTML = '<b>Buy</b>'
   div.appendChild(btn)
 
-  document.getElementById('shop-container').appendChild(div)
+  document.getElementById('shop-items').appendChild(div)
 })
 
 
@@ -304,12 +372,14 @@ function onPressButton() {
   audio.currentTime = 0
   audio.play()
 
-  score += ev.add
-  scoreEl.innerText = score 
+  updateScore(ev.add)
+
+  ITEMS.forEach(updateBuyBtn)
 }
 
 function onPressBuyItem(item) {
-  if (this.score < this.item.price) throw new Error('Not enough score.')
-  this.score -= this.item.price
-  this.item.levelUp()
+  if (!item.canBuy) throw new Error('Cannot buy item!')
+  updateScore(-1*item.price)
+  item.levelUp()
+  updateItemHTML(item)
 }

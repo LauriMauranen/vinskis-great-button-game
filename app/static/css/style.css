@@ -36,7 +36,7 @@ h1 {
 }
 
 #shop-btn {
-  z-index: 10;
+  z-index: 12;
   position: absolute;
   right: 0;
   top: 0;
@@ -55,30 +55,29 @@ h1 {
 }
 
 #shop-items {
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  overflow-x: hidden;
   z-index: 10;
   background-color: #85dde6;
   position: absolute;
   top: 50%;
   left: 50%;
-  height: 70%;
-  width: 70%;
+  max-height: 70%;
+  max-width: 70%;
   transform: translateX(-50%) translateY(-50%);
   border-style: solid;
   border-color: black;
-  border-width: 0.3em;
-}
-
-#shop-container {
-  display: flex;
-  flex-wrap: wrap;
+  border-width: 0.3em 0 0 0.3em;
 }
 
 .shop-item {
-  margin-left: -0.3em;
   margin-top: -0.3em;
+  margin-left: -0.3em;
   padding: 0em;
-  height: 15em;
-  width: 15em;
+  height: 17em;
+  width: 17em;
   border-style: solid;
   border-color: black;
   border-width: 0.3em;
@@ -91,11 +90,13 @@ h1 {
 
 .shop-item h3 {
   display: inline;
+  margin-left: 0.5em;
 }
 
 .shop-item img {
   display: inline-block;
   margin-left: 0.5em;
+  margin-right: 0.5em;
   height: 5em;
   width: 5em;
   vertical-align: baseline;
@@ -104,19 +105,17 @@ h1 {
 .shop-item p {
   display: inline-block;
   margin-top: 0;
-  margin-bottom: 0;
-  margin-left: 1em;
-  height: 8em;
-  width: 8em;
+  margin-bottom: 1em;
+  height: 6em;
+  width: 10em;
 }
 
 .shop-item button {
   position: relative;
-  transform: translateX(-50%);
   background-color: #eb9f1c;
   height: 3em;
   width: 4em;
-  left: 50%;
+  left: 10%;
 }
 
 .title {
