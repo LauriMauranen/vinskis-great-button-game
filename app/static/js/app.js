@@ -7,7 +7,7 @@ const SHOP_BTN_TITLE_ID = 'shop-btn-title'
 const GAME_ID = 'game'
 const SHOP_ID = 'shop'
 
-const N_STARS = window.screen.availWidth < 700 ? 25 : 25
+const N_STARS = window.screen.availWidth < 700 ? 20 : 20
 const STARS = []
 
 const SHOP_BTN_TITLE_1 = 'Shop'
@@ -175,8 +175,8 @@ class Item {
   }
 
   get canBuy() {
-    return true
-    // return !this.isFullLevel && score >= this.price
+    // return true
+    return !this.isFullLevel && score >= this.price
   }
 
   get price() {
@@ -268,20 +268,21 @@ ITEMS.forEach(item => {
   if (!div.id) throw new Error('Id missing.')
 
   div.innerHTML = `
-<h2>${item.name}</h2>
-<h3>Level 
+<h2 class="shop-item-title">${item.name}</h2>
+<h3 class="shop-item-level">Level 
   <span id="${item.levelId}">${item.level}</span>
 </h3>
 <br>
-<img src="${item.img}" alt="">
-<p id="${item.textId}">${item.text}</p>
-<h3>Price
+<img class="shop-item-img" src="${item.img}" alt="">
+<p id="${item.textId}" class="shop-item-text">${item.text}</p>
+<h3 class="shop-item-price">Price
   <span id="${item.priceId}">${item.price}</span>
 </h3>
   `
 
   const btn = document.createElement('button')
   btn.id = item.btnId
+  btn.classList.add('shop-item-btn')
   btn.onclick = () => onPressBuyItem(item)
   btn.disabled = !item.canBuy
   btn.innerHTML = '<b>Buy</b>'
