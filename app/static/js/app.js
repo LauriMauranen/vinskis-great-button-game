@@ -4,8 +4,8 @@
 const SCORE_ID = 'score'
 const BTN_ID = 'btn'
 const SHOP_BTN_TITLE_ID = 'shop-btn-title'
-const GAME_ID = 'game'
-const SHOP_ID = 'shop'
+// const GAME_ID = 'game'
+const SHOP_ID = 'shop-items'
 
 const N_STARS = window.screen.availWidth < 700 ? 20 : 20
 const STARS = []
@@ -17,10 +17,10 @@ const ITEM_IDS = Object.freeze({
   autoclicker: 'item-autoclicker',
 })
 
-const GAME_VIEWS = Object.freeze({
-  GAME: 'GAME',
-  SHOP: 'SHOP',
-})
+// const GAME_VIEWS = Object.freeze({
+//   GAME: 'GAME',
+//   SHOP: 'SHOP',
+// })
 
 const PRESS_SOUNDS = {
   bruh: 'static/sound/bruh-1.mp3',
@@ -71,14 +71,14 @@ let score = 0
 let clicks = 0
 let clicksSent = 0
 
-let showEruda = false
+// let showEruda = false
 
-let view = GAME_VIEWS.GAME
+// let view = GAME_VIEWS.GAME
 
 const scoreEl = document.getElementById(SCORE_ID)
 const btnEl = document.getElementById(BTN_ID)
 const shopBtnTitleEl = document.getElementById(SHOP_BTN_TITLE_ID)
-const gameEl = document.getElementById(GAME_ID)
+// const gameEl = document.getElementById(GAME_ID)
 const shopEl = document.getElementById(SHOP_ID)
 
 scoreEl.innerText = score
@@ -160,12 +160,8 @@ class Item {
     throw new NotImplementedError
   }
 
-  removeEffect() {
-    throw new NotImplementedError
-  }
-
   get textVals() {
-    throw new NotImplementedError
+    return []
   }
 
   get text() {
@@ -175,8 +171,8 @@ class Item {
   }
 
   get canBuy() {
-    // return true
-    return !this.isFullLevel && score >= this.price
+    return true
+    // return !this.isFullLevel && score >= this.price
   }
 
   get price() {
@@ -210,7 +206,6 @@ class Item {
 
   levelUp() {
     if (this.isFullLevel) throw new Error('Full level')
-    this.removeEffect()
     this.effect()
     this.level++
   }
@@ -220,42 +215,46 @@ class AutoClicker extends Item {
   constructor(id) {
     super(
       id,
-      'Auto Clicker', 
-      '/static/img/button.png',
-      'Auto-clicks the button ? times per second.',
-      [{ eff: 5000, price: 1000 },
-      { eff: 4000, price: 2000 },
-      { eff: 2500, price: 4000 },
-      { eff: 2000, price: 8000 },
-      { eff: 1000, price: 16000 },
-      { eff: 900, price: 32000 },
-      { eff: 800, price: 64000 },
-      { eff: 700, price: 128000 },
-      { eff: 600, price: 256000 },
-      { eff: 500, price: 512000 }]
+      'Auto-Clicker', 
+      '/static/img/auto-clicker.svg',
+      'Auto-clicks the button once per five seconds.',
+      [{ price: 250 },
+      { price: 500 },
+      { price: 1000 },
+      { price: 5000 },
+      { price: 10000 }]
     )
-
-    this.interval = null
   }
 
   effect() {
-    this.interval = 
-      setInterval(onPressButton, this.levelStuff.eff)
+    const hand = document.createElement('img')
+    hand.src = '/static/img/auto-clicker.svg'
+    hand.classList.add('autoclicker-hand')
+    hand.style.left = `${this.level}em`
+
+    document.body.appendChild(hand)
+
+    setInterval(() => {
+      hand.classList.add('autoclicker-push-btn')
+      setTimeout(() => {
+        hand.classList.remove('autoclicker-push-btn')
+        onPressButton()
+      }, 2000)
+    }, 5000)
   }
 
-  removeEffect() {
-    clearInterval(this.interval)  
-  }
+  // removeEffect() {
+  //   clearInterval(this.interval)  
+  // }
 
-  get textVals() {
-    const val = (1000 / this.levelStuff.eff).toFixed(1)
-    return [val]
-  }
+  // get textVals() {
+  //   const val = (1000 / this.levelStuff.eff).toFixed(1)
+  //   return [val]
+  // }
 }
 
 const ITEMS = [
-  new AutoClicker(1),
-  new AutoClicker(2),
+  new AutoClicker(ITEM_IDS.autoclicker),
 ]
 
 // items to the shop
@@ -339,27 +338,25 @@ for (let i = 0; i < N_STARS; i++) {
 
 
 function onPressShopBtn() {
-  switch(view) {
-    case GAME_VIEWS.GAME: {
-      view = GAME_VIEWS.SHOP
-      gameEl.style.display = 'none'    
-      shopEl.style.display = 'block'    
+  const d = shopEl.style.display
+  switch(d) {
+    case 'none': {
+      shopEl.style.display = 'flex'    
       shopBtnTitleEl.innerText = SHOP_BTN_TITLE_2
       break
     }
 
-    case GAME_VIEWS.SHOP: {
-      view = GAME_VIEWS.GAME
+    case 'flex': {
       shopEl.style.display = 'none'    
-      gameEl.style.display = 'block'    
       shopBtnTitleEl.innerText = SHOP_BTN_TITLE_1
       break
     }
 
-    default: throw new Error('Unexpected game view.')
+    default: throw new Error(
+      `Unexpected display style ${d}`
+    )
   }
 }
-
 
 function onPressButton() {
   btnEl.classList.add('push-btn')

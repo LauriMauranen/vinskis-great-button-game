@@ -9,8 +9,8 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
     <script defer src="/static/js/app.js" ></script>
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script defer src="/static/js/eruda-toggle.js" ></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script> -->
+    <!-- <script defer src="/static/js/eruda-toggle.js" ></script> -->
   </head>
 
   <body>
@@ -27,23 +27,18 @@
       <h1 id="shop-btn-title"></h1>
     </button>
 
-    <div id="game">
-      <input 
-        id="btn"
-        type="image" 
-        src="/static/img/button.png"
-        onclick="onPressButton()"
-      />
-      
-      <div class="title">
-        <h1>Vinskis Great Button Game</h1>
-      </div>
+    <input 
+      id="btn"
+      type="image" 
+      src="/static/img/button.png"
+      onclick="onPressButton()"
+    />
+
+    <div class="title">
+      <h1>Vinskis Great Button Game</h1>
     </div>
 
-    <div id="shop">
-      <div id="shop-items">
-      </div>
-    </div>
+    <div id="shop-items"></div>
 
   </body>
 </html>

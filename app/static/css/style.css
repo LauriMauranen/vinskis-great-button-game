@@ -46,20 +46,12 @@ h1 {
   background-color: #eb9f1c;
 }
 
-#game {
-  display: none;
-}
-
-#shop {
-  display: block;
-}
-
 #shop-items {
   display: flex;
   flex-wrap: wrap;
   overflow-y: auto;
   overflow-x: hidden;
-  z-index: 10;
+  z-index: 20;
   background-color: #85dde6;
   position: absolute;
   top: 50%;
@@ -133,6 +125,26 @@ h1 {
   text-align: center;
 }
 
+.autoclicker-hand {
+  position: absolute;
+  top: 11em;
+  width: 3em;
+  height: 3em;
+  z-index: 15;
+
+  /* animation-name: ; */
+  /* animation-duration: 2; */
+  /* animation-timing-function: linear; */
+  /* animation-iteration-count: infinite; */
+}
+
+.autoclicker-push-btn {
+  animation-name: autoclicker-push-button;
+  animation-duration: 2s;
+  /* animation-timing-function: linear; */
+  animation-iteration-count: infinite;
+}
+
 .blue-star-color {
   background-color: #85dde6;
 }
@@ -182,5 +194,32 @@ h1 {
 @keyframes push-button {
   50% {
     top: 55%;
+  }
+}
+
+@keyframes autoclicker-push-button {
+  50% {
+    top: 50%;
+    left: 50%;
+  }
+
+  60% {
+    top: 48%;
+    left: 40%;
+  }
+
+  70% {
+    top: 46%;
+    left: 30%;
+  }
+
+  80% {
+    top: 44%;
+    left: 20%;
+  }
+
+  90% {
+    top: 42%;
+    left: 10%;
   }
 }
