@@ -27,12 +27,30 @@
       <h1 id="shop-btn-title"></h1>
     </button>
 
-    <input 
-      id="btn"
-      type="image" 
-      src="/static/img/button.png"
-      onclick="onPressButton()"
-    />
+    <div id="btn">
+      <img 
+        src="/static/img/button.png"
+        width="100%"
+        height="100%"
+      >
+      <div 
+        id="btn-color"
+        onclick="onPressButton()"
+      >
+      </div>
+    </div>
+
+    <img 
+      id="color-wheel-svg" 
+      src="/static/img/color-wheel.svg"
+    >
+
+    <canvas 
+      id="color-wheel" 
+      width="150" 
+      height="150"
+    >
+    </canvas>
 
     <div id="shop-items"></div>
 

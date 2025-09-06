@@ -3,8 +3,14 @@
 
 const SCORE_ID = 'score'
 const BTN_ID = 'btn'
+const BTN_COLOR_ID = 'btn-color'
 const SHOP_BTN_TITLE_ID = 'shop-btn-title'
 const SHOP_ID = 'shop-items'
+const COLOR_WHEEL_ID = 'color-wheel'
+const COLOR_WHEEL_SVG_ID = 'color-wheel-svg'
+
+const COLOR_WHEEL_WIDTH = 150
+const COLOR_WHEEL_HEIGHT = 150
 
 const N_STARS = window.screen.availWidth < 700 ? 20 : 20
 const STARS = []
@@ -164,8 +170,8 @@ class Item {
   }
 
   get canBuy() {
-    return true
-    // return !this.fullLevel && score >= this.price
+    // return true
+    return !this.fullLevel && score >= this.price
   }
 
   get price() {
@@ -251,10 +257,20 @@ class ColorWheel extends Item {
   }
 
   effect() {
-    const wheel = document.createElement('img')
-    wheel.src = '/static/img/color-wheel.svg'
-    wheel.classList.add('color-wheel')
-    document.body.appendChild(wheel)
+    const canvas = document.getElementById(COLOR_WHEEL_ID)
+    const ctx = canvas.getContext('2d')
+    const svg = document.getElementById(COLOR_WHEEL_SVG_ID)
+
+    ctx.drawImage(
+      svg, 
+      0, 
+      0, 
+      COLOR_WHEEL_HEIGHT,
+      COLOR_WHEEL_WIDTH,
+    )
+    canvas.style.display = 'block'
+
+    canvas.addEventListener('click', onPressColorWheel)
   }
 }
 
@@ -392,4 +408,35 @@ function onPressBuyItem(item) {
   updateScore(-1 * item.price)
   item.levelUp()
   updateItemHTML(item)
+}
+
+function onPressColorWheel(ev) {
+  // if (!(typeof ev.value === 'number')) {
+  //   console.log('Value not a number.')
+  //   return
+  // }
+
+  const canvas = document.getElementById(COLOR_WHEEL_ID)
+  const ctx = canvas.getContext('2d')
+  const data = ctx.getImageData(
+    0, 
+    0, 
+    COLOR_WHEEL_HEIGHT,
+    COLOR_WHEEL_WIDTH,
+  ).data
+
+  const x = ev.clientX
+  const y = Math.floor(ev.clientY - canvas.getBoundingClientRect().y)
+
+  const i = 4 * (y * COLOR_WHEEL_HEIGHT + x)
+
+  const red = data[i]
+  const green = data[i + 1]
+  const blue = data[i + 2]
+
+  const div = document.getElementById(BTN_COLOR_ID)
+  div.style.setProperty(
+    'background-color', 
+    `rgba(${red}, ${green}, ${blue})`
+  )
 }
