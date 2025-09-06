@@ -131,11 +131,6 @@ h1 {
   width: 3em;
   height: 3em;
   z-index: 15;
-
-  /* animation-name: ; */
-  /* animation-duration: 2; */
-  /* animation-timing-function: linear; */
-  /* animation-iteration-count: infinite; */
 }
 
 .autoclicker-push-btn {
@@ -143,6 +138,14 @@ h1 {
   animation-duration: 2s;
   /* animation-timing-function: linear; */
   animation-iteration-count: infinite;
+}
+
+.color-wheel {
+  position: absolute;
+  bottom: 0;
+  height: 8em;
+  width: 8em;
+  z-index: 15;
 }
 
 .blue-star-color {
@@ -201,25 +204,5 @@ h1 {
   50% {
     top: 50%;
     left: 50%;
-  }
-
-  60% {
-    top: 48%;
-    left: 40%;
-  }
-
-  70% {
-    top: 46%;
-    left: 30%;
-  }
-
-  80% {
-    top: 44%;
-    left: 20%;
-  }
-
-  90% {
-    top: 42%;
-    left: 10%;
   }
 }

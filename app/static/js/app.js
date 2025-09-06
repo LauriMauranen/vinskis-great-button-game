@@ -4,7 +4,6 @@
 const SCORE_ID = 'score'
 const BTN_ID = 'btn'
 const SHOP_BTN_TITLE_ID = 'shop-btn-title'
-// const GAME_ID = 'game'
 const SHOP_ID = 'shop-items'
 
 const N_STARS = window.screen.availWidth < 700 ? 20 : 20
@@ -15,12 +14,8 @@ const SHOP_BTN_TITLE_2 = 'Back'
 
 const ITEM_IDS = Object.freeze({
   autoclicker: 'item-autoclicker',
+  colorwheel: 'item-colorwheel',
 })
-
-// const GAME_VIEWS = Object.freeze({
-//   GAME: 'GAME',
-//   SHOP: 'SHOP',
-// })
 
 const PRESS_SOUNDS = {
   bruh: 'static/sound/bruh-1.mp3',
@@ -73,12 +68,9 @@ let clicksSent = 0
 
 // let showEruda = false
 
-// let view = GAME_VIEWS.GAME
-
 const scoreEl = document.getElementById(SCORE_ID)
 const btnEl = document.getElementById(BTN_ID)
 const shopBtnTitleEl = document.getElementById(SHOP_BTN_TITLE_ID)
-// const gameEl = document.getElementById(GAME_ID)
 const shopEl = document.getElementById(SHOP_ID)
 
 scoreEl.innerText = score
@@ -154,6 +146,7 @@ class Item {
     this._textTemplate = textTemplate
     this.levels = levels
     this.level = 1
+    this.fullLevel = false
   }
 
   effect() {
@@ -172,16 +165,12 @@ class Item {
 
   get canBuy() {
     return true
-    // return !this.isFullLevel && score >= this.price
+    // return !this.fullLevel && score >= this.price
   }
 
   get price() {
-    if (this.isFullLevel) return '-'
+    if (this.fullLevel) return '-'
     return this.levels[this.level-1].price
-  }
-
-  get isFullLevel() {
-    return this.levels.length === this.level
   }
 
   get levelStuff() {
@@ -205,9 +194,13 @@ class Item {
   }
 
   levelUp() {
-    if (this.isFullLevel) throw new Error('Full level')
+    if (this.fullLevel) throw new Error('Full level')
     this.effect()
-    this.level++
+    if (this.levels.length === this.level) {
+      this.fullLevel = true
+    } else {
+      this.level++
+    }
   }
 }
 
@@ -236,25 +229,38 @@ class AutoClicker extends Item {
 
     setInterval(() => {
       hand.classList.add('autoclicker-push-btn')
+
+      setTimeout(onPressButton, 1000)
+
       setTimeout(() => {
         hand.classList.remove('autoclicker-push-btn')
-        onPressButton()
       }, 2000)
     }, 5000)
   }
+}
 
-  // removeEffect() {
-  //   clearInterval(this.interval)  
-  // }
+class ColorWheel extends Item {
+  constructor(id) {
+    super(
+      id,
+      'Color Wheel', 
+      '/static/img/color-wheel.svg',
+      'Change color of the button.',
+      [{ price: 200 }],
+    )
+  }
 
-  // get textVals() {
-  //   const val = (1000 / this.levelStuff.eff).toFixed(1)
-  //   return [val]
-  // }
+  effect() {
+    const wheel = document.createElement('img')
+    wheel.src = '/static/img/color-wheel.svg'
+    wheel.classList.add('color-wheel')
+    document.body.appendChild(wheel)
+  }
 }
 
 const ITEMS = [
   new AutoClicker(ITEM_IDS.autoclicker),
+  new ColorWheel(ITEM_IDS.colorwheel),
 ]
 
 // items to the shop
@@ -346,6 +352,12 @@ function onPressShopBtn() {
       break
     }
 
+    case '': {
+      shopEl.style.display = 'none'    
+      shopBtnTitleEl.innerText = SHOP_BTN_TITLE_1
+      break
+    }
+
     case 'flex': {
       shopEl.style.display = 'none'    
       shopBtnTitleEl.innerText = SHOP_BTN_TITLE_1
@@ -353,7 +365,7 @@ function onPressShopBtn() {
     }
 
     default: throw new Error(
-      `Unexpected display style ${d}`
+      `Unexpected display style '${d}'`
     )
   }
 }
@@ -377,7 +389,7 @@ function onPressButton() {
 
 function onPressBuyItem(item) {
   if (!item.canBuy) throw new Error('Cannot buy item!')
-  updateScore(-1*item.price)
+  updateScore(-1 * item.price)
   item.levelUp()
   updateItemHTML(item)
 }
