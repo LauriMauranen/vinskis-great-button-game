@@ -277,6 +277,8 @@ class ColorWheel extends Item {
 const ITEMS = [
   new AutoClicker(ITEM_IDS.autoclicker),
   new ColorWheel(ITEM_IDS.colorwheel),
+  new AutoClicker(ITEM_IDS.autoclicker),
+  new ColorWheel(ITEM_IDS.colorwheel),
 ]
 
 // items to the shop
@@ -363,7 +365,7 @@ function onPressShopBtn() {
   const d = shopEl.style.display
   switch(d) {
     case 'none': {
-      shopEl.style.display = 'flex'    
+      shopEl.style.display = 'grid'    
       shopBtnTitleEl.innerText = SHOP_BTN_TITLE_2
       break
     }
@@ -374,7 +376,7 @@ function onPressShopBtn() {
       break
     }
 
-    case 'flex': {
+    case 'grid': {
       shopEl.style.display = 'none'    
       shopBtnTitleEl.innerText = SHOP_BTN_TITLE_1
       break
