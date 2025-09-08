@@ -18,11 +18,6 @@ const STARS = []
 const SHOP_BTN_TITLE_1 = 'Shop'
 const SHOP_BTN_TITLE_2 = 'Back'
 
-const ITEM_IDS = Object.freeze({
-  autoclicker: 'item-autoclicker',
-  colorwheel: 'item-colorwheel',
-})
-
 const PRESS_SOUNDS = {
   bruh: 'static/sound/bruh-1.mp3',
   explosion: 'static/sound/explosion-1.mp3',
@@ -170,8 +165,8 @@ class Item {
   }
 
   get canBuy() {
-    // return true
-    return !this.fullLevel && score >= this.price
+    return true
+    // return !this.fullLevel && score >= this.price
   }
 
   get price() {
@@ -213,7 +208,7 @@ class Item {
 class AutoClicker extends Item {
   constructor(id) {
     super(
-      id,
+      'item-autoclicker',
       'Auto-Clicker', 
       '/static/img/auto-clicker.svg',
       'Auto-clicks the button once per five seconds.',
@@ -229,7 +224,7 @@ class AutoClicker extends Item {
     const hand = document.createElement('img')
     hand.src = '/static/img/auto-clicker.svg'
     hand.classList.add('autoclicker-hand')
-    hand.style.left = `${this.level}em`
+    hand.style.left = `${this.level - 0.9}em`
 
     document.body.appendChild(hand)
 
@@ -248,7 +243,7 @@ class AutoClicker extends Item {
 class ColorWheel extends Item {
   constructor(id) {
     super(
-      id,
+      'item-colorwheel',
       'Color Wheel', 
       '/static/img/color-wheel.svg',
       'Change color of the button.',
@@ -274,11 +269,121 @@ class ColorWheel extends Item {
   }
 }
 
+class Bananas extends Item {
+  static get DURATION() {
+    return 2000
+  }
+
+  static get CSS_SIZE() {
+    return '-7em'
+  }
+
+  constructor(id) {
+    super(
+      'item-bananas',
+      'Bananas', 
+      '/static/img/bananas.svg',
+      'Gets you fresh bananas.',
+      [{ price: 5000 },
+      { price: 10000 },
+      { price: 30000 }],
+    )
+
+    this.pressed = new Set()
+  }
+
+  effect() {
+    const bananas = document.createElement('img')
+    bananas.src = '/static/img/bananas.svg'
+    bananas.classList.add('bananas')
+
+    bananas.addEventListener('click', (ev) => {
+      if (this.pressed.has(this.level)) return
+      this.pressed.add(this.level) 
+      updateScore(100)
+    })
+
+    document.body.appendChild(bananas)
+
+    setInterval(() => {
+      let frames
+      const val1 = randInt(101)
+      const val2 = randInt(101)
+
+      switch(randInt(4)) {
+        case 0: {
+          frames = [
+            {
+              display: 'block',
+              top: `${val1}%`,
+              left: Bananas.CSS_SIZE,
+            },
+            {
+              top: `${val2}%`,
+              right: Bananas.CSS_SIZE,
+            },
+          ]
+        }
+        case 1: {
+          frames = [
+            {
+              display: 'block',
+              left: `${val1}%`,
+              top: Bananas.CSS_SIZE,
+            },
+            {
+              left: `${val2}%`,
+              bottom: Bananas.CSS_SIZE,
+            },
+          ]
+        }
+        case 2: {
+          frames = [
+            {
+              display: 'block',
+              top: `${val1}%`,
+              right: Bananas.CSS_SIZE,
+            },
+            {
+              top: `${val2}%`,
+              left: Bananas.CSS_SIZE,
+            },
+          ]
+        }
+        case 3: {
+          frames = [
+            {
+              display: 'block',
+              left: `${val1}%`,
+              bottom: Bananas.CSS_SIZE,
+            },
+            {
+              left: `${val2}%`,
+              top: Bananas.CSS_SIZE,
+            },
+          ]
+        }
+      }
+
+      bananas.animate([
+        { display: 'block' }, 
+        {},
+      ], {
+        duration: Bananas.DURATION,
+        iterations: 1,
+      })
+
+      setTimeout(
+        () => this.pressed.delete(this.level),
+        Bananas.DURATION + 200,
+      )
+    }, 3000)
+  }
+}
 const ITEMS = [
-  new AutoClicker(ITEM_IDS.autoclicker),
-  new ColorWheel(ITEM_IDS.colorwheel),
-  new AutoClicker(ITEM_IDS.autoclicker),
-  new ColorWheel(ITEM_IDS.colorwheel),
+  new AutoClicker(),
+  new ColorWheel(),
+  new Bananas(),
 ]
 
 // items to the shop
