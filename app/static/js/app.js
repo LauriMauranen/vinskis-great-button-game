@@ -1,11 +1,14 @@
 // constanst
 
 
+const DEBUG = false
+
 const SCORE_ID = 'score'
 const BTN_ID = 'btn'
 const BTN_COLOR_ID = 'btn-color'
 const SHOP_BTN_TITLE_ID = 'shop-btn-title'
 const SHOP_ID = 'shop-items'
+const SPEAKER_ID = 'speaker'
 const COLOR_WHEEL_ID = 'color-wheel'
 const COLOR_WHEEL_SVG_ID = 'color-wheel-svg'
 
@@ -24,6 +27,26 @@ const PRESS_SOUNDS = {
   yeehaw: 'static/sound/yeehaw-1.mp3',
 }
 
+const MUSIC_BREAK = 5000  // ms
+const MUSIC_TRACKS = [
+  { 
+    file: 'static/sound/music-1.mp3', 
+    duration: 123 * 1000,
+  },
+  { 
+    file: 'static/sound/music-2.mp3', 
+    duration: 218 * 1000,
+  },
+  { 
+    file: 'static/sound/music-3.mp3', 
+    duration: 131 * 1000,
+  },
+  { 
+    file: 'static/sound/music-4.mp3', 
+    duration: 240 * 1000,
+  },
+]
+
 
 // events
 
@@ -37,13 +60,13 @@ const PRESS_EVENTS = [
   },
   {
     // name: 'unlucky',
-    probability: 0.005,
+    probability: 0.002,
     sound: PRESS_SOUNDS.explosion,
-    add: -50,
+    add: -200,
   },
   {
     // name: 'lucky',
-    probability: 0.01,
+    probability: 0.001,
     sound: PRESS_SOUNDS.yeehaw,
     add: 100,
   },
@@ -64,15 +87,17 @@ PRESS_EVENTS[0].probability = p
 
 let score = 0
 
-let clicks = 0
+let humanClicks = 0
 let clicksSent = 0
 
+let playPressSound = true
 // let showEruda = false
 
 const scoreEl = document.getElementById(SCORE_ID)
 const btnEl = document.getElementById(BTN_ID)
 const shopBtnTitleEl = document.getElementById(SHOP_BTN_TITLE_ID)
 const shopEl = document.getElementById(SHOP_ID)
+const speakerEl = document.getElementById(SPEAKER_ID)
 
 scoreEl.innerText = score
 shopBtnTitleEl.innerText = SHOP_BTN_TITLE_1
@@ -91,6 +116,7 @@ class NotImplementedError extends Error {
 function updateScore(add) {
   score += add
   scoreEl.innerText = score 
+  updateBuyBtns(ITEMS)
 }
 
 function randEvent(evs) {
@@ -130,10 +156,27 @@ function textId(id) {
   return `item-text-${id}`
 } 
 
-function updateBuyBtn(item) {
-  document.getElementById(item.btnId)
-    .disabled = !item.canBuy
+function updateBuyBtns(items) {
+  items.forEach(item => {
+    document.getElementById(item.btnId)
+      .disabled = !item.canBuy
+  })
 } 
+
+function playRandTrack() {
+  const t = MUSIC_TRACKS[randInt(MUSIC_TRACKS.length)]
+  const audio = new Audio(t.file)
+  audio.play()
+  console.log(t)
+  return t.duration
+}
+
+function trackTimeout(dur) {
+  setTimeout(
+    () => trackTimeout(playRandTrack()), 
+    dur + MUSIC_BREAK,
+  )
+}
 
 
 // items
@@ -165,12 +208,13 @@ class Item {
   }
 
   get canBuy() {
-    return true
-    // return !this.fullLevel && score >= this.price
+    // return true
+    return !this.fullLevel && score >= this.price
   }
 
   get price() {
     if (this.fullLevel) return '-'
+    if (DEBUG) return 20
     return this.levels[this.level-1].price
   }
 
@@ -212,11 +256,11 @@ class AutoClicker extends Item {
       'Auto-Clicker', 
       '/static/img/auto-clicker.svg',
       'Auto-clicks the button once per five seconds.',
-      [{ price: 250 },
-      { price: 500 },
-      { price: 1000 },
+      [{ price: 1000 },
+      { price: 2000 },
       { price: 5000 },
-      { price: 10000 }]
+      { price: 10000 },
+      { price: 50000 }]
     )
   }
 
@@ -247,7 +291,7 @@ class ColorWheel extends Item {
       'Color Wheel', 
       '/static/img/color-wheel.svg',
       'Change color of the button.',
-      [{ price: 200 }],
+      [{ price: 1000 }],
     )
   }
 
@@ -271,11 +315,11 @@ class ColorWheel extends Item {
 
 class Bananas extends Item {
   static get DURATION() {
-    return 2000
+    return 10000
   }
 
   static get CSS_SIZE() {
-    return '-7em'
+    return '7em'
   }
 
   constructor(id) {
@@ -284,11 +328,12 @@ class Bananas extends Item {
       'Bananas', 
       '/static/img/bananas.svg',
       'Gets you fresh bananas.',
-      [{ price: 5000 },
-      { price: 10000 },
-      { price: 30000 }],
+      [{ price: 10000 },
+      { price: 50000 },
+      { price: 100000 }],
     )
 
+    // you can press bananas once
     this.pressed = new Set()
   }
 
@@ -300,7 +345,8 @@ class Bananas extends Item {
     bananas.addEventListener('click', (ev) => {
       if (this.pressed.has(this.level)) return
       this.pressed.add(this.level) 
-      updateScore(100)
+      updateScore(this.level * 100)
+      new Audio(PRESS_SOUNDS.yeehaw).play()
     })
 
     document.body.appendChild(bananas)
@@ -310,72 +356,75 @@ class Bananas extends Item {
       const val1 = randInt(101)
       const val2 = randInt(101)
 
-      switch(randInt(4)) {
+      const dir = randInt(4)
+      switch(dir) {
         case 0: {
           frames = [
             {
-              display: 'block',
               top: `${val1}%`,
-              left: Bananas.CSS_SIZE,
+              left: `-${Bananas.CSS_SIZE}`,
             },
             {
               top: `${val2}%`,
-              right: Bananas.CSS_SIZE,
+              left: `calc(100% + ${Bananas.CSS_SIZE})`,
             },
           ]
+          break;
         }
         case 1: {
           frames = [
             {
-              display: 'block',
               left: `${val1}%`,
-              top: Bananas.CSS_SIZE,
+              top: `-${Bananas.CSS_SIZE}`,
             },
             {
               left: `${val2}%`,
-              bottom: Bananas.CSS_SIZE,
+              top: `calc(100% + ${Bananas.CSS_SIZE})`,
             },
           ]
+          break;
         }
         case 2: {
           frames = [
             {
-              display: 'block',
               top: `${val1}%`,
-              right: Bananas.CSS_SIZE,
+              right:  `-${Bananas.CSS_SIZE}`,
             },
             {
               top: `${val2}%`,
-              left: Bananas.CSS_SIZE,
+              right: `calc(100% + ${Bananas.CSS_SIZE})`,
             },
           ]
+          break;
         }
         case 3: {
           frames = [
             {
-              display: 'block',
               left: `${val1}%`,
-              bottom: Bananas.CSS_SIZE,
+              bottom: `-${Bananas.CSS_SIZE}`,
             },
             {
               left: `${val2}%`,
-              top: Bananas.CSS_SIZE,
+              bottom: `calc(100% + ${Bananas.CSS_SIZE})`,
             },
           ]
+          break;
         }
+        default: throw new Error(dir)
       }
 
-      bananas.animate([
-        { display: 'block' }, 
-        {},
-      ], {
+      bananas.style.display = 'block'
+      bananas.animate(frames, {
         duration: Bananas.DURATION,
         iterations: 1,
       })
 
       setTimeout(
-        () => this.pressed.delete(this.level),
-        Bananas.DURATION + 200,
+        () => {
+          bananas.style.display = 'none'
+          this.pressed.delete(this.level)
+        },
+        Bananas.DURATION - 100,
       )
     }, 3000)
   }
@@ -412,7 +461,7 @@ ITEMS.forEach(item => {
   btn.id = item.btnId
   btn.classList.add('shop-item-btn')
   btn.onclick = () => onPressBuyItem(item)
-  btn.disabled = !item.canBuy
+  btn.disabled = true
   btn.innerHTML = '<b>Buy</b>'
   div.appendChild(btn)
 
@@ -424,9 +473,9 @@ ITEMS.forEach(item => {
 
 
 setInterval(() => {
-  if (clicks === clicksSent) return
+  if (humanClicks === clicksSent) return
 
-  const n = clicks - clicksSent
+  const n = humanClicks - clicksSent
   const data = new FormData
   data.append('n', n)
 
@@ -463,6 +512,12 @@ for (let i = 0; i < N_STARS; i++) {
 }
 
 
+// music
+
+
+trackTimeout(playRandTrack())
+
+
 // press handlers
 
 
@@ -493,36 +548,35 @@ function onPressShopBtn() {
   }
 }
 
-function onPressButton() {
-  btnEl.classList.add('push-btn')
-  setTimeout(() => btnEl.classList.remove('push-btn'), 200)
-
-  clicks += 1
+function onPressButton(human) {
+  if (human) humanClicks += 1
 
   const ev = randEvent(PRESS_EVENTS)
 
-  const audio = new Audio(ev.sound)
-  audio.currentTime = 0
-  audio.play()
+  // mute only basic sound
+  if (ev.add !== 1 || playPressSound) {
+    new Audio(ev.sound).play()
+  }
 
   updateScore(ev.add)
 
-  ITEMS.forEach(updateBuyBtn)
+  btnEl.animate([
+    { top: '55%', offset: 0.5 },
+  ], {
+    duration: 200,
+    iterations: 1,
+  })
 }
 
 function onPressBuyItem(item) {
   if (!item.canBuy) throw new Error('Cannot buy item!')
-  updateScore(-1 * item.price)
+  const price = item.price
   item.levelUp()
+  updateScore(-1 * price)
   updateItemHTML(item)
 }
 
 function onPressColorWheel(ev) {
-  // if (!(typeof ev.value === 'number')) {
-  //   console.log('Value not a number.')
-  //   return
-  // }
-
   const canvas = document.getElementById(COLOR_WHEEL_ID)
   const ctx = canvas.getContext('2d')
   const data = ctx.getImageData(
@@ -546,4 +600,14 @@ function onPressColorWheel(ev) {
     'background-color', 
     `rgba(${red}, ${green}, ${blue})`
   )
+}
+
+function onPressSpeaker() {
+  playPressSound = !playPressSound
+
+  if (playPressSound) {
+    speakerEl.classList.remove('speaker-mute')
+  } else {
+    speakerEl.classList.add('speaker-mute')
+  }
 }

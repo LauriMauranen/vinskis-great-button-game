@@ -27,6 +27,15 @@
       <h1 id="shop-btn-title"></h1>
     </button>
 
+    <input 
+      id="speaker"
+      type="image"
+      src="/static/img/speaker.svg"
+      width="30px"
+      height="30px"
+      onclick="onPressSpeaker()"
+    >
+
     <div id="btn">
       <img 
         src="/static/img/button.png"
@@ -35,7 +44,7 @@
       >
       <div 
         id="btn-color"
-        onclick="onPressButton()"
+        onclick="onPressButton(event)"
       >
       </div>
     </div>
