@@ -68,8 +68,8 @@ h1 {
 }
 
 #shop-items {
-  /* display: none; */
-  display: grid;
+  display: none;
+  /* display: grid; */
   gap: 0.2em;
   overflow-y: auto;
   overflow-x: hidden;

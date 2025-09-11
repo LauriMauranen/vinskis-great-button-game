@@ -531,7 +531,7 @@ function onPressShopBtn() {
     }
 
     case '': {
-      shopEl.style.display = 'none'    
+      shopEl.style.display = 'grid'    
       shopBtnTitleEl.innerText = SHOP_BTN_TITLE_1
       break
     }
