@@ -14,12 +14,14 @@ python3 -m venv .venv
 
 pip install -r requirements.txt
 
-# TODO promt this
 if [ ! -z "$INIT_DB" ]; then
-	echo "Old database will be overwritten."	
+	read -p "Old database will be overwritten. Are you sure you want to do it? [yes/no] " yn
+	if [ "$yn" != "yes" ]; then 
+		echo "You typed '$yn', exiting."
+		exit 0 
+	fi
 	flask init-db
 fi
-
 
 pkill -f gunicorn
 gunicorn -w 4 -D --error-logfile "$GUNICORN_ERROR_LOG" 'app:app'
