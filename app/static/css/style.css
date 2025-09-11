@@ -224,6 +224,11 @@ h1 {
   animation-iteration-count: infinite;
 }
 
+#chart-container {
+  height: 30em;
+  width: 50em;
+}
+
 @keyframes falling-and-rotating-cw {
   from {
     top: -5%;

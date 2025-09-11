@@ -40,16 +40,15 @@ def clicks():
 
 @app.route("/clicks/stats/")
 def clicks_stats():
-    n = request.form['n']
+    # TODO this is slow is there are lots of rows
+    n_per_day = db.query_db('''
+SELECT date(created) AS date, sum(n) AS n
+FROM clicks
+WHERE id != 1
+GROUP BY date(created)'''
+    )
+    return n_per_day
 
-    if int(n) < 500: 
-        last_id = db.insert_in_db('INSERT into clicks (n) VALUES (?)', [n])
-        print(f'added row to clicks, id: {last_id}, n: {n}')
-    else:
-        print(f'n too big ({n})')
-    
-    big_n = db.update_big_n(n)
-
-    print(f'{big_n} button presses overall')
-
-    return 'OK'
+@app.route("/stats/")
+def stats():
+    return render_template('stats.html')
