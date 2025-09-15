@@ -6,12 +6,17 @@
       name="viewport" 
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.min.js" integrity="sha512-n/G+dROKbKL3GVngGWmWfwK0yPctjZQM752diVYnXZtD/48agpUKLIn0xDQL9ydZ91x6BiOmTIFwWjjFi2kEFg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="/static/js/stats.js"></script>
   </head>
   <body>
-    <div id=chart-container>
-      <canvas id="chart"></canvas>
+    <div id=chart-container></div>
+
+    <div id="chart-btns">
+      <button onclick="newChart(CHARTS.month)">month</button>
+      <button onclick="newChart(CHARTS.year)">Year</button>
+      <!-- <button onclick="newChart(CHARTS.alltime)">All-time</button> -->
     </div>
   </body>
 </html>

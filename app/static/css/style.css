@@ -225,8 +225,15 @@ h1 {
 }
 
 #chart-container {
-  height: 30em;
-  width: 50em;
+  display: inline-block;
+  width: 80%;
+  /* height: 80%; */
+  background-color: white;
+}
+
+#chart-btns {
+  display: inline-block;
+  width: 20%;
 }
 
 @keyframes falling-and-rotating-cw {

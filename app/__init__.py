@@ -21,6 +21,11 @@ def home():
     return render_template('index.html')
 
 
+@app.route("/stats/")
+def stats():
+    return render_template('stats.html')
+
+
 @app.route("/clicks/", methods=['POST'])
 def clicks():
     n = request.form['n']
@@ -40,15 +45,11 @@ def clicks():
 
 @app.route("/clicks/stats/")
 def clicks_stats():
-    # TODO this is slow is there are lots of rows
     n_per_day = db.query_db('''
 SELECT date(created) AS date, sum(n) AS n
 FROM clicks
 WHERE id != 1
-GROUP BY date(created)'''
+GROUP BY date
+ORDER BY date'''
     )
     return n_per_day
-
-@app.route("/stats/")
-def stats():
-    return render_template('stats.html')
