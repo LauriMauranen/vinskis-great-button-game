@@ -9,13 +9,19 @@ const BTN_COLOR_ID = 'btn-color'
 const SHOP_BTN_TITLE_ID = 'shop-btn-title'
 const SHOP_ID = 'shop-items'
 const SPEAKER_ID = 'speaker'
+
+const SCORE_LS_KEY = 'score'
+const ITEMS_LS_KEY = 'items'
+const SPEAKER_LS_KEY = 'speaker'
+const BTN_COLOR_LS_KEY = 'btn-color'
+
 const COLOR_WHEEL_ID = 'color-wheel'
 const COLOR_WHEEL_SVG_ID = 'color-wheel-svg'
 
 const COLOR_WHEEL_WIDTH = 150
 const COLOR_WHEEL_HEIGHT = 150
 
-const N_STARS = window.screen.availWidth < 700 ? 20 : 20
+const N_STARS = 20
 const STARS = []
 
 const SHOP_BTN_TITLE_1 = 'Shop'
@@ -26,6 +32,12 @@ const PRESS_SOUNDS = {
   explosion: 'static/sound/explosion-1.mp3',
   yeehaw: 'static/sound/yeehaw-1.mp3',
 }
+
+const ITEM_IDS = Object.freeze({
+  autoClicker: 'item-autoclicker',
+  colorWheel: 'item-colorwheel',
+  bananas: 'item-bananas',
+})
 
 const MUSIC_BREAK = 5000  // ms
 const MUSIC_TRACKS = [
@@ -85,13 +97,17 @@ PRESS_EVENTS[0].probability = p
 // globals
 
 
-let score = 0
+let score = Number(window.localStorage.getItem(SCORE_LS_KEY) || 0)
 
 let humanClicks = 0
 let clicksSent = 0
 
-let playPressSound = true
-// let showEruda = false
+const ppsLS = window.localStorage.getItem(SPEAKER_LS_KEY)
+let playPressSound = ppsLS ? ppsLS === 'true' : true
+
+
+// html elements
+
 
 const scoreEl = document.getElementById(SCORE_ID)
 const btnEl = document.getElementById(BTN_ID)
@@ -101,6 +117,21 @@ const speakerEl = document.getElementById(SPEAKER_ID)
 
 scoreEl.innerText = score
 shopBtnTitleEl.innerText = SHOP_BTN_TITLE_1
+
+if (!playPressSound) {
+  speakerEl.classList.add('speaker-mute')
+}
+
+const btnColLS = window.localStorage.getItem(BTN_COLOR_LS_KEY)
+
+if (btnColLS) {
+  document.getElementById(BTN_COLOR_ID)
+    .style
+    .setProperty(
+    'background-color', 
+    btnColLS,
+  )
+}
 
 
 // helpers
@@ -117,6 +148,7 @@ function updateScore(add) {
   score += add
   scoreEl.innerText = score 
   updateBuyBtns(ITEMS)
+  window.localStorage.setItem(SCORE_LS_KEY, score)
 }
 
 function randEvent(evs) {
@@ -135,7 +167,7 @@ function randInt(max) {
 }
 
 function updateItemHTML(item) {
-  document.getElementById(item.levelId).innerText = item.level
+  document.getElementById(item.levelId).innerText = item.levelText
   document.getElementById(item.priceId).innerText = item.price
   document.getElementById(item.textId).innerText = item.text
 }
@@ -167,7 +199,6 @@ function playRandTrack() {
   const t = MUSIC_TRACKS[randInt(MUSIC_TRACKS.length)]
   const audio = new Audio(t.file)
   audio.play()
-  console.log(t)
   return t.duration
 }
 
@@ -190,7 +221,6 @@ class Item {
     this._textTemplate = textTemplate
     this.levels = levels
     this.level = 1
-    this.fullLevel = false
   }
 
   effect() {
@@ -208,8 +238,15 @@ class Item {
   }
 
   get canBuy() {
-    // return true
     return !this.fullLevel && score >= this.price
+  }
+
+  get fullLevel() {
+    return this.level === this.levels.length + 1
+  }
+
+  get levelText() {
+    return this.fullLevel ? 'Full level' : `Level ${this.level}`
   }
 
   get price() {
@@ -241,18 +278,14 @@ class Item {
   levelUp() {
     if (this.fullLevel) throw new Error('Full level')
     this.effect()
-    if (this.levels.length === this.level) {
-      this.fullLevel = true
-    } else {
-      this.level++
-    }
+    this.level++
   }
 }
 
 class AutoClicker extends Item {
   constructor(id) {
     super(
-      'item-autoclicker',
+      id,
       'Auto-Clicker', 
       '/static/img/auto-clicker.svg',
       'Auto-clicks the button once per five seconds.',
@@ -287,7 +320,7 @@ class AutoClicker extends Item {
 class ColorWheel extends Item {
   constructor(id) {
     super(
-      'item-colorwheel',
+      id,
       'Color Wheel', 
       '/static/img/color-wheel.svg',
       'Change color of the button.',
@@ -296,26 +329,29 @@ class ColorWheel extends Item {
   }
 
   effect() {
-    const canvas = document.getElementById(COLOR_WHEEL_ID)
-    const ctx = canvas.getContext('2d')
-    const svg = document.getElementById(COLOR_WHEEL_SVG_ID)
+    // need timeout because svg might have not loaded yet
+    setTimeout(() => {
+      const canvas = document.getElementById(COLOR_WHEEL_ID)
+      const ctx = canvas.getContext('2d')
+      const svg = document.getElementById(COLOR_WHEEL_SVG_ID)
 
-    ctx.drawImage(
-      svg, 
-      0, 
-      0, 
-      COLOR_WHEEL_HEIGHT,
-      COLOR_WHEEL_WIDTH,
-    )
-    canvas.style.display = 'block'
+      ctx.drawImage(
+        svg, 
+        0, 
+        0, 
+        COLOR_WHEEL_HEIGHT,
+        COLOR_WHEEL_WIDTH,
+      )
+      canvas.style.display = 'block'
 
-    canvas.addEventListener('click', onPressColorWheel)
+      canvas.addEventListener('click', onPressColorWheel)
+    }, 500)
   }
 }
 
 class Bananas extends Item {
   static get DURATION() {
-    return 10000
+    return 3000
   }
 
   static get CSS_SIZE() {
@@ -324,7 +360,7 @@ class Bananas extends Item {
 
   constructor(id) {
     super(
-      'item-bananas',
+      id,
       'Bananas', 
       '/static/img/bananas.svg',
       'Gets you fresh bananas.',
@@ -357,6 +393,7 @@ class Bananas extends Item {
       const val2 = randInt(101)
 
       const dir = randInt(4)
+
       switch(dir) {
         case 0: {
           frames = [
@@ -426,14 +463,27 @@ class Bananas extends Item {
         },
         Bananas.DURATION - 100,
       )
-    }, 3000)
+    }, 30000)
   }
 }
+
 const ITEMS = [
-  new AutoClicker(),
-  new ColorWheel(),
-  new Bananas(),
+  new AutoClicker(ITEM_IDS.autoClicker),
+  new ColorWheel(ITEM_IDS.colorWheel),
+  new Bananas(ITEM_IDS.bananas),
 ]
+
+// update item levels from localStorage
+JSON.parse(
+  window.localStorage.getItem(ITEMS_LS_KEY) || '[]'
+).forEach(({ id, level }) => {
+  const item = ITEMS.find(i => i.id === id)
+  if (!item) throw new Error(`No item with id ${id}`)
+  for (let i = 1; i < Number(level); i++) {
+    item.levelUp()
+  }
+})
+
 
 // items to the shop
 
@@ -446,9 +496,7 @@ ITEMS.forEach(item => {
 
   div.innerHTML = `
 <h2 class="shop-item-title">${item.name}</h2>
-<h3 class="shop-item-level">Level 
-  <span id="${item.levelId}">${item.level}</span>
-</h3>
+<h3 id="${item.levelId}" class="shop-item-level">${item.levelText}</h3>
 <br>
 <img class="shop-item-img" src="${item.img}" alt="">
 <p id="${item.textId}" class="shop-item-text">${item.text}</p>
@@ -461,7 +509,7 @@ ITEMS.forEach(item => {
   btn.id = item.btnId
   btn.classList.add('shop-item-btn')
   btn.onclick = () => onPressBuyItem(item)
-  btn.disabled = true
+  btn.disabled = !item.canBuy
   btn.innerHTML = '<b>Buy</b>'
   div.appendChild(btn)
 
@@ -570,10 +618,20 @@ function onPressButton(human) {
 
 function onPressBuyItem(item) {
   if (!item.canBuy) throw new Error('Cannot buy item!')
+  
   const price = item.price
+  
   item.levelUp()
   updateScore(-1 * price)
   updateItemHTML(item)
+  
+  const itemsToLS = ITEMS.map(i => ({
+    id: i.id,
+    level: i.level,
+  }))
+  
+  localStorage.setItem(ITEMS_LS_KEY, JSON.stringify(itemsToLS))
+
 }
 
 function onPressColorWheel(ev) {
@@ -595,11 +653,15 @@ function onPressColorWheel(ev) {
   const green = data[i + 1]
   const blue = data[i + 2]
 
+  const col = `rgba(${red}, ${green}, ${blue})`
+
   const div = document.getElementById(BTN_COLOR_ID)
   div.style.setProperty(
     'background-color', 
-    `rgba(${red}, ${green}, ${blue})`
+    col,
   )
+
+  window.localStorage.setItem(BTN_COLOR_LS_KEY, col)
 }
 
 function onPressSpeaker() {
@@ -610,4 +672,6 @@ function onPressSpeaker() {
   } else {
     speakerEl.classList.add('speaker-mute')
   }
+
+  window.localStorage.setItem(SPEAKER_LS_KEY, playPressSound)
 }
