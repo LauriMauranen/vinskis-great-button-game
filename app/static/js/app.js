@@ -289,11 +289,11 @@ class AutoClicker extends Item {
       'Auto-Clicker', 
       '/static/img/auto-clicker.svg',
       'Auto-clicks the button once per five seconds.',
-      [{ price: 1000 },
+      [{ price: 300 },
+      { price: 1000 },
       { price: 2000 },
-      { price: 5000 },
-      { price: 10000 },
-      { price: 50000 }]
+      { price: 3000 },
+      { price: 5000 }]
     )
   }
 
@@ -324,7 +324,7 @@ class ColorWheel extends Item {
       'Color Wheel', 
       '/static/img/color-wheel.svg',
       'Change color of the button.',
-      [{ price: 1000 }],
+      [{ price: 500 }],
     )
   }
 
@@ -364,9 +364,9 @@ class Bananas extends Item {
       'Bananas', 
       '/static/img/bananas.svg',
       'Gets you fresh bananas.',
-      [{ price: 10000 },
-      { price: 50000 },
-      { price: 100000 }],
+      [{ price: 1000 },
+      { price: 5000 },
+      { price: 10000 }],
     )
 
     // you can press bananas once
