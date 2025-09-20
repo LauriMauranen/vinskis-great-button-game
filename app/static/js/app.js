@@ -96,13 +96,13 @@ PRESS_EVENTS[0].probability = p
 
 // globals
 
-
-let score = Number(window.localStorage.getItem(SCORE_LS_KEY) || 0)
+let score = localStorage ? 
+  Number(localStorage.getItem(SCORE_LS_KEY)) : 0
 
 let humanClicks = 0
 let clicksSent = 0
 
-const ppsLS = window.localStorage.getItem(SPEAKER_LS_KEY)
+const ppsLS = localStorage && localStorage.getItem(SPEAKER_LS_KEY)
 let playPressSound = ppsLS ? ppsLS === 'true' : true
 
 
@@ -122,7 +122,7 @@ if (!playPressSound) {
   speakerEl.classList.add('speaker-mute')
 }
 
-const btnColLS = window.localStorage.getItem(BTN_COLOR_LS_KEY)
+const btnColLS = localStorage && localStorage.getItem(BTN_COLOR_LS_KEY)
 
 if (btnColLS) {
   document.getElementById(BTN_COLOR_ID)
@@ -148,7 +148,7 @@ function updateScore(add) {
   score += add
   scoreEl.innerText = score 
   updateBuyBtns(ITEMS)
-  window.localStorage.setItem(SCORE_LS_KEY, score)
+  if (localStorage) localStorage.setItem(SCORE_LS_KEY, score)
 }
 
 function randEvent(evs) {
@@ -474,15 +474,17 @@ const ITEMS = [
 ]
 
 // update item levels from localStorage
-JSON.parse(
-  window.localStorage.getItem(ITEMS_LS_KEY) || '[]'
-).forEach(({ id, level }) => {
-  const item = ITEMS.find(i => i.id === id)
-  if (!item) throw new Error(`No item with id ${id}`)
-  for (let i = 1; i < Number(level); i++) {
-    item.levelUp()
-  }
-})
+if (localStorage) {
+  JSON.parse(
+    localStorage.getItem(ITEMS_LS_KEY) || '[]'
+  ).forEach(({ id, level }) => {
+    const item = ITEMS.find(i => i.id === id)
+    if (!item) throw new Error(`No item with id ${id}`)
+    for (let i = 1; i < Number(level); i++) {
+      item.levelUp()
+    }
+  })
+}
 
 
 // items to the shop
@@ -630,8 +632,8 @@ function onPressBuyItem(item) {
     level: i.level,
   }))
   
-  localStorage.setItem(ITEMS_LS_KEY, JSON.stringify(itemsToLS))
-
+  if (localStorage) 
+    localStorage.setItem(ITEMS_LS_KEY, JSON.stringify(itemsToLS))
 }
 
 function onPressColorWheel(ev) {
@@ -661,7 +663,7 @@ function onPressColorWheel(ev) {
     col,
   )
 
-  window.localStorage.setItem(BTN_COLOR_LS_KEY, col)
+  if (localStorage) localStorage.setItem(BTN_COLOR_LS_KEY, col)
 }
 
 function onPressSpeaker() {
@@ -673,5 +675,5 @@ function onPressSpeaker() {
     speakerEl.classList.add('speaker-mute')
   }
 
-  window.localStorage.setItem(SPEAKER_LS_KEY, playPressSound)
+  if (localStorage) localStorage.setItem(SPEAKER_LS_KEY, playPressSound)
 }
