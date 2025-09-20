@@ -10,6 +10,16 @@ h1 {
   -webkit-user-select: none;
 }
 
+#clear-cache-btn {
+  z-index: 15;
+  display: none;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 7em;
+  height: 3em;
+}
+
 #btn {
   z-index: 15;
   position: absolute;

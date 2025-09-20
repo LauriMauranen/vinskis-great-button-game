@@ -9,6 +9,7 @@ const BTN_COLOR_ID = 'btn-color'
 const SHOP_BTN_TITLE_ID = 'shop-btn-title'
 const SHOP_ID = 'shop-items'
 const SPEAKER_ID = 'speaker'
+const CLEAR_CACHE_BTN_ID = 'clear-cache-btn'
 
 const SCORE_LS_KEY = 'score'
 const ITEMS_LS_KEY = 'items'
@@ -114,16 +115,16 @@ const btnEl = document.getElementById(BTN_ID)
 const shopBtnTitleEl = document.getElementById(SHOP_BTN_TITLE_ID)
 const shopEl = document.getElementById(SHOP_ID)
 const speakerEl = document.getElementById(SPEAKER_ID)
+const clearCacheBtnEl = document.getElementById(CLEAR_CACHE_BTN_ID)
+
+if (DEBUG) clearCacheBtnEl.style.display = 'block'
 
 scoreEl.innerText = score
 shopBtnTitleEl.innerText = SHOP_BTN_TITLE_1
 
-if (!playPressSound) {
-  speakerEl.classList.add('speaker-mute')
-}
+if (!playPressSound) speakerEl.classList.add('speaker-mute')
 
 const btnColLS = localStorage && localStorage.getItem(BTN_COLOR_LS_KEY)
-
 if (btnColLS) {
   document.getElementById(BTN_COLOR_ID)
     .style
@@ -305,15 +306,18 @@ class AutoClicker extends Item {
 
     document.body.appendChild(hand)
 
-    setInterval(() => {
-      hand.classList.add('autoclicker-push-btn')
+    function move() {
+        hand.classList.add('autoclicker-push-btn')
+        setTimeout(onPressButton, 1000)
+        setTimeout(() => {
+          hand.classList.remove('autoclicker-push-btn')
+        }, 2000)
+    }
 
-      setTimeout(onPressButton, 1000)
-
-      setTimeout(() => {
-        hand.classList.remove('autoclicker-push-btn')
-      }, 2000)
-    }, 5000)
+    setTimeout(() => {
+      move()
+      setInterval(move, 5000)
+    }, randInt(5000))
   }
 }
 
@@ -387,83 +391,85 @@ class Bananas extends Item {
 
     document.body.appendChild(bananas)
 
-    setInterval(() => {
-      let frames
-      const val1 = randInt(101)
-      const val2 = randInt(101)
+    setTimeout(() => {
+      setInterval(() => {
+        let frames
+        const val1 = randInt(101)
+        const val2 = randInt(101)
 
-      const dir = randInt(4)
+        const dir = randInt(4)
 
-      switch(dir) {
-        case 0: {
-          frames = [
-            {
-              top: `${val1}%`,
-              left: `-${Bananas.CSS_SIZE}`,
-            },
-            {
-              top: `${val2}%`,
-              left: `calc(100% + ${Bananas.CSS_SIZE})`,
-            },
-          ]
-          break;
+        switch(dir) {
+          case 0: {
+            frames = [
+              {
+                top: `${val1}%`,
+                left: `-${Bananas.CSS_SIZE}`,
+              },
+              {
+                top: `${val2}%`,
+                left: `calc(100% + ${Bananas.CSS_SIZE})`,
+              },
+            ]
+            break;
+          }
+          case 1: {
+            frames = [
+              {
+                left: `${val1}%`,
+                top: `-${Bananas.CSS_SIZE}`,
+              },
+              {
+                left: `${val2}%`,
+                top: `calc(100% + ${Bananas.CSS_SIZE})`,
+              },
+            ]
+            break;
+          }
+          case 2: {
+            frames = [
+              {
+                top: `${val1}%`,
+                right:  `-${Bananas.CSS_SIZE}`,
+              },
+              {
+                top: `${val2}%`,
+                right: `calc(100% + ${Bananas.CSS_SIZE})`,
+              },
+            ]
+            break;
+          }
+          case 3: {
+            frames = [
+              {
+                left: `${val1}%`,
+                bottom: `-${Bananas.CSS_SIZE}`,
+              },
+              {
+                left: `${val2}%`,
+                bottom: `calc(100% + ${Bananas.CSS_SIZE})`,
+              },
+            ]
+            break;
+          }
+          default: throw new Error(dir)
         }
-        case 1: {
-          frames = [
-            {
-              left: `${val1}%`,
-              top: `-${Bananas.CSS_SIZE}`,
-            },
-            {
-              left: `${val2}%`,
-              top: `calc(100% + ${Bananas.CSS_SIZE})`,
-            },
-          ]
-          break;
-        }
-        case 2: {
-          frames = [
-            {
-              top: `${val1}%`,
-              right:  `-${Bananas.CSS_SIZE}`,
-            },
-            {
-              top: `${val2}%`,
-              right: `calc(100% + ${Bananas.CSS_SIZE})`,
-            },
-          ]
-          break;
-        }
-        case 3: {
-          frames = [
-            {
-              left: `${val1}%`,
-              bottom: `-${Bananas.CSS_SIZE}`,
-            },
-            {
-              left: `${val2}%`,
-              bottom: `calc(100% + ${Bananas.CSS_SIZE})`,
-            },
-          ]
-          break;
-        }
-        default: throw new Error(dir)
-      }
 
-      bananas.style.display = 'block'
-      bananas.animate(frames, {
-        duration: Bananas.DURATION,
-        iterations: 1,
-      })
+        bananas.style.display = 'block'
+        bananas.animate(frames, {
+          duration: Bananas.DURATION,
+          iterations: 1,
+        })
 
-      setTimeout(
-        () => {
-          bananas.style.display = 'none'
-          this.pressed.delete(this.level)
-        },
-        Bananas.DURATION - 100,
-      )
-    }, 30000)
+        setTimeout(
+          () => {
+            bananas.style.display = 'none'
+            this.pressed.delete(this.level)
+          },
+          Bananas.DURATION - 100,
+        )
+      }, 1000 * 30)
+    }, randInt(1000 * 20))
   }
 }
 
@@ -676,4 +682,8 @@ function onPressSpeaker() {
   }
 
   if (localStorage) localStorage.setItem(SPEAKER_LS_KEY, playPressSound)
+}
+
+function onPressClearCache() {
+  if (localStorage) localStorage.clear()
 }
