@@ -196,18 +196,29 @@ function updateBuyBtns(items) {
   })
 } 
 
-function playRandTrack() {
+async function playRandTrack() {
   const t = MUSIC_TRACKS[randInt(MUSIC_TRACKS.length)]
   const audio = new Audio(t.file)
-  audio.play()
-  return t.duration
+
+  try {
+    await audio.play()
+    return t.duration
+  } catch(e) {
+    // try 5 seconds later again
+    return 5000
+  }
 }
 
 function trackTimeout(dur) {
+  if (!dur) return 
   setTimeout(
-    () => trackTimeout(playRandTrack()), 
+    async () => trackTimeout(await playRandTrack()), 
     dur + MUSIC_BREAK,
   )
+}
+
+async function startMusic() {
+  return trackTimeout(await playRandTrack())
 }
 
 
@@ -571,7 +582,7 @@ for (let i = 0; i < N_STARS; i++) {
 // music
 
 
-trackTimeout(playRandTrack())
+startMusic()
 
 
 // press handlers
