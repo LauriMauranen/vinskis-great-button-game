@@ -25,7 +25,3 @@ fi
 
 pkill -f gunicorn
 gunicorn -w 4 -D --error-logfile "$GUNICORN_ERROR_LOG" 'app:app'
-
-cp nginx.conf /etc/nginx/
-
-nginx -s reload
