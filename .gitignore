@@ -2,5 +2,5 @@
 *.swo
 .venv
 __pycache__
-app.db
+*.db
 .env

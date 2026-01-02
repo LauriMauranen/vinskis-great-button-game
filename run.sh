@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -o pipefail
+set -oeu pipefail
 
 ERR_LOG="$1"
 
