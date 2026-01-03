@@ -5,7 +5,6 @@ WORKDIR /usr/src/app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY app/ .
+COPY . .
 
-ARG errorLog
-CMD gunicorn -D --error-logfile $errorLog --reload 'app:app'
+CMD gunicorn -D --error-logfile /var/log/gunicorn/error.log 'app:app'
