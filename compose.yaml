@@ -4,3 +4,5 @@ services:
     volumes: 
       - /var/log/vinskis-great-button-game/gunicorn/:/var/log/gunicorn/
       - /home/lauri/sqlite/button-game.db:/usr/src/app/button-game.db
+    networks:
+      - nginx
