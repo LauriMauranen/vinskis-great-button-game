@@ -2,12 +2,12 @@ services:
   btn-game:
     build: .
     volumes: 
-      - /var/log/vinskis-great-button-game/gunicorn/:/var/log/gunicorn/
+      - /var/log/vinskis-great-button-game/gunicorn/:/usr/src/app/log/gunicorn
       - /home/lauri/sqlite/button-game.db:/usr/src/app/button-game.db
     networks:
-      - nginx
+      - podman
 
 networks:
-  nginx:
-    name: nginx
+  podman:
+    name: podman
     external: true
