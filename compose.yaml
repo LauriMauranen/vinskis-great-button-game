@@ -1,13 +1,8 @@
 services:
   btn-game:
     build: .
+    ports:
+      - "8000:8000"
     volumes: 
       - /var/log/vinskis-great-button-game/gunicorn/:/usr/src/app/log/gunicorn
       - /home/lauri/sqlite/button-game.db:/usr/src/app/button-game.db
-    networks:
-      - podman
-
-networks:
-  podman:
-    name: podman
-    external: true
