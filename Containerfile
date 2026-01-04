@@ -7,4 +7,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD gunicorn -D --error-logfile /var/log/gunicorn/error.log 'app:app'
+CMD gunicorn --error-logfile /var/log/gunicorn/error.log 'app:app'
