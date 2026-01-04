@@ -6,3 +6,8 @@ services:
       - /home/lauri/sqlite/button-game.db:/usr/src/app/button-game.db
     networks:
       - nginx
+
+networks:
+  nginx:
+    name: nginx
+    external: true
