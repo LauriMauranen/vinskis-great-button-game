@@ -42,8 +42,8 @@ def clicks():
 
     return 'OK'
 
-
-@app.route("/clicks/stats/")
+# test nginx /api configuration
+@app.route("/api/clicks/stats/")
 def clicks_stats():
     n_per_day = db.query_db('''
 SELECT date(created) AS date, sum(n) AS n
