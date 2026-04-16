@@ -82,7 +82,7 @@ function addMissingDays(rows) {
 }
 
 
-fetch('/clicks/stats/')
+fetch('/api/clicks/stats/')
   .then(res => {
     if (!res.ok) throw new Error(res.status)
     return res.json()
