@@ -2,5 +2,5 @@ services:
   btn-game:
     build: .
     volumes: 
-      - /var/log/vinskis-great-button-game/gunicorn/:/usr/src/app/log/gunicorn
+      - /var/log/sovelluslokit/vinskis-great-button-game.fi/gunicorn:/usr/src/app/log/gunicorn
       - /home/lauri/sqlite/button-game.db:/usr/src/app/button-game.db
