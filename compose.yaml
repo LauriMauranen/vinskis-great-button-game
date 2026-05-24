@@ -4,3 +4,5 @@ services:
     volumes: 
       - /var/log/sovelluslokit/vinskis-great-button-game.fi/gunicorn:/usr/src/app/log/gunicorn
       - /home/lauri/sqlite/button-game.db:/usr/src/app/button-game.db
+    environment:
+      - GUNICORN_PORT=${GUNICORN_PORT}

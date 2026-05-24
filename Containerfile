@@ -7,5 +7,5 @@ RUN pip install -r requirements.txt
 
 RUN mkdir -p log/gunicorn && chmod a+rw log -R
 
-# anna portti -b "0.0.0.0:8000"
-ENTRYPOINT ["gunicorn", "--error-logfile", "log/gunicorn/error.log", "app:app"]
+ENTRYPOINT [ "gunicorn", "--error-logfile", "log/gunicorn/error.log", \
+	"app:app", "-b", "\"0.0.0.0:$GUNICORN_PORT\""]
