@@ -1,0 +1,18 @@
+[Unit]
+Description=Vinskis Great Button Game
+
+[Container]
+Image=localhost/vinskis-great-button-game:latest
+ContainerName=btn-game
+Volume=/home/lauri/log/vinskis-great-button-game.fi/gunicorn:/usr/src/app/log/gunicorn
+Volume=/home/lauri/sqlite/button-game.db:/usr/src/app/button-game.db
+PublishPort=8047:8047
+Exec=-b 0.0.0.0:8047
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Restart=always
+RestartSec=5
+TimeoutStartSec=900
