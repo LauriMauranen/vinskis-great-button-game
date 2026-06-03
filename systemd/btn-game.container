@@ -6,8 +6,9 @@ Image=localhost/vinskis-great-button-game_btn-game:latest
 ContainerName=btn-game
 Volume=/home/lauri/log/vinskis-great-button-game.fi/gunicorn:/usr/src/app/log/gunicorn
 Volume=/home/lauri/sqlite/button-game.db:/usr/src/app/button-game.db
-PodmanArgs=--publish %i:%i
-Exec=-b 0.0.0.0:%i
+# Portit pitää vaihtaa oikeaan
+PublishPorts=8047:8047
+Exec=-b 0.0.0.0:8047
 
 [Install]
 WantedBy=default.target
